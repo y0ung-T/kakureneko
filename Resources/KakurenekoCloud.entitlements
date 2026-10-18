@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Merged into Kakureneko.entitlements by scripts/build-app.sh when the Mac provisioning profile is available
+	     (docs/NATIVE-NOTIFICATIONS.md §6). Every key must be granted by that profile (team 7NRW73MYQZ). -->
+	<key>com.apple.application-identifier</key>
+	<string>7NRW73MYQZ.com.kakureneko.Kakureneko</string>
+	<key>com.apple.developer.team-identifier</key>
+	<string>7NRW73MYQZ</string>
+	<!-- CloudKit pushes (zone-v1: an iPhone saved a command). Development profile → APNs sandbox. -->
+	<key>com.apple.developer.aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.com.kakureneko.Kakureneko</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudKit</string>
+	</array>
+	<key>com.apple.developer.usernotifications.time-sensitive</key>
+	<true/>
+</dict>
+</plist>

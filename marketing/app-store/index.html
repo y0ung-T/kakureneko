@@ -1,0 +1,218 @@
+<!doctype html>
+<!-- Kakureneko for iPhone: the App Store kit. A local page (open it from the site server, see README.md) that shows
+     the listing roughly as the App Store lays it out, and every field ready to paste into App Store Connect with its
+     character count. The texts are the ones in docs/APP-STORE.md; change them there first, then here. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kakureneko App Store Kit</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root {
+    --ink: #121212; --paper: #F4F2EC; --card: #FFFFFF; --line: #E2DFD6; --ink-2: #6E6B63; --ink-3: #9A978F;
+    --amber: #FFB300; --amber-ink: #7A5200; --ok: #1B7A43; --bad: #B3261E;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #F4F2EC; --paper: #1A1915; --card: #24231E; --line: #35332C; --ink-2: #A6A299; --ink-3: #6E6B63;
+            --amber-ink: #FFC63D; --ok: #6FDC9A; --bad: #FF7B7B; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 640px) { .wrap { padding: 0 24px; } }
+  header { padding: 40px 0 8px; }
+  h1 { font-size: 34px; line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 8px; }
+  h2 { font-size: 24px; letter-spacing: -0.01em; margin: 56px 0 16px; }
+  .label { font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--amber-ink); margin: 0 0 8px; }
+  .muted { color: var(--ink-2); }
+  a { color: inherit; text-underline-offset: 0.18em; }
+  .card { background: var(--card); border-radius: 14px; padding: 20px; }
+
+  /* Listing preview */
+  .listing { display: grid; grid-template-columns: 96px 1fr; gap: 16px 20px; align-items: center; }
+  .listing img.icon { width: 96px; height: 96px; border-radius: 22px; border: 1px solid var(--line); }
+  .listing .name { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+  .listing .subtitle { color: var(--ink-2); }
+  .get { display: inline-block; margin-top: 8px; background: var(--amber); color: #121212; font-weight: 700; border-radius: 999px; padding: 4px 20px; font-size: 15px; }
+  .facts { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); padding-top: 12px; text-align: center; }
+  .facts div + div { border-left: 1px solid var(--line); }
+  .facts small { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); }
+  .facts b { font-size: 17px; }
+  .strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 1fr); gap: 12px; overflow-x: auto; padding: 20px 0 8px; scroll-snap-type: x mandatory; }
+  .strip a { scroll-snap-align: start; }
+  .strip img { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--line); }
+  @media (max-width: 639px) { .strip { grid-auto-columns: 58%; } .facts b { font-size: 15px; } }
+  .desc { white-space: pre-wrap; margin: 16px 0 0; }
+
+  /* Fields */
+  .fields { display: grid; gap: 12px; }
+  .field { background: var(--card); border-radius: 14px; padding: 16px 20px; }
+  .field-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 8px; }
+  .field-head h3 { font-size: 15px; margin: 0; }
+  .count { font: 13px var(--mono); color: var(--ok); }
+  .count.over { color: var(--bad); font-weight: 700; }
+  .value { font-family: var(--mono); font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0;
+           background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  button.copy { font: 600 13px var(--font); color: #121212; background: var(--amber); border: 0; border-radius: 999px; padding: 4px 14px; cursor: pointer; }
+  button.copy:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .note { font-size: 14px; color: var(--ink-2); margin: 8px 0 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td, th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  .table-wrap { overflow-x: auto; background: var(--card); border-radius: 14px; }
+  .todo { color: var(--bad); font-weight: 600; }
+  ul.files { padding-left: 20px; }
+  footer { margin: 64px 0 48px; font-size: 14px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="label">App Store kit</p>
+  <h1>Kakureneko for iPhone</h1>
+  <p class="muted">The listing as the App Store lays it out, then every field ready to paste into App Store Connect. Full reasoning in <code>docs/APP-STORE.md</code>.</p>
+</header>
+
+<main class="wrap">
+  <h2>Preview</h2>
+  <div class="card">
+    <div class="listing">
+      <img class="icon" src="app-icon-1024.png" alt="The Kakureneko app icon: Soot, a black cat, sitting on a closed MacBook.">
+      <div>
+        <div class="name" data-src="name"></div>
+        <div class="subtitle" data-src="subtitle"></div>
+        <span class="get">Get</span>
+      </div>
+      <div class="facts">
+        <div><small>Age</small><b>4+</b></div>
+        <div><small>Category</small><b>Developer Tools</b></div>
+        <div><small>Developer</small><b class="todo">TODO</b></div>
+        <div><small>Size</small><b>—</b></div>
+      </div>
+    </div>
+    <div class="strip" id="strip"></div>
+    <p class="desc" data-src="promo"></p>
+    <p class="desc muted" data-src="description"></p>
+  </div>
+
+  <h2>Fields to paste</h2>
+  <div class="fields" id="fields"></div>
+
+  <h2>Screenshots and icon</h2>
+  <div class="card">
+    <p style="margin-top:0">Upload under <b>iPhone 6.9" Display</b>, in this order. 1320 × 2868, opaque PNG. Apple scales them down for smaller iPhones.</p>
+    <ul class="files" id="files"></ul>
+    <p class="note">The phone screens are real Simulator captures of the app's demo mode (<code>-KakurenekoDemo …</code>), with the fixtures written from the Mac app's real alert templates. Shot 2's alert card is drawn from the same texts as the real notification (title, Mac name, body, Soot thumbnail and the two long-press buttons), because the Simulator can't show a real CloudKit alert. Regenerate with <code>marketing/app-store/render.sh</code>.</p>
+    <p class="note">App icon: <a href="app-icon-1024.png">app-icon-1024.png</a> (1024 × 1024, no alpha). Xcode uploads it with the build. You don't upload it separately.</p>
+  </div>
+
+  <h2>Still needed from you</h2>
+  <div class="table-wrap"><table>
+    <tr><td>Copyright and developer name</td><td>Your legal name or company, e.g. <code>2026 Your Name</code>. It's also needed in <code>scripts/release.env</code> and on the privacy page.</td></tr>
+    <tr><td>Price</td><td>Free or paid. Nothing in the listing mentions a price.</td></tr>
+    <tr><td>App Review contact</td><td>Name, phone and email.</td></tr>
+    <tr><td>Demo video for App Review</td><td>A short unlisted video of the Mac and iPhone working together. Its link goes into the review notes.</td></tr>
+    <tr><td>Website live</td><td>The support and privacy URLs have to load before you submit.</td></tr>
+    <tr><td><code>support@kakureneko.com</code></td><td>Set up email forwarding at Namecheap.</td></tr>
+  </table></div>
+</main>
+
+<footer class="wrap">Kakureneko (<span lang="ja">隠れ猫</span>) is Japanese for "hiding cat".</footer>
+
+<script>
+  // Texts from docs/APP-STORE.md §1–2. Limits are App Store Connect's.
+  const F = {
+    name: { label: 'Name', limit: 30, text: 'Kakureneko',
+      note: 'If the name is taken: "Kakureneko: Agent Alerts", then use the subtitle "Know when your agents finish".' },
+    subtitle: { label: 'Subtitle', limit: 30, text: 'Alerts from your coding agents' },
+    promo: { label: 'Promotional text', limit: 170,
+      text: 'Close the lid and walk away. Kakureneko tells you when your coding agents finish or need you, and lets you keep your Mac awake or put it to sleep from your iPhone.',
+      note: 'You can change it any time without a new build.' },
+    description: { label: 'Description', limit: 4000, text:
+`Kakureneko for iPhone is the companion to Kakureneko for Mac, a menu bar app that keeps your Mac awake while AI coding agents work, even with the lid closed, and lets it sleep again when they're done.
+
+Close the lid, leave, and your iPhone keeps you in the loop:
+
+• Know when an agent finishes, and how long it worked.
+• See when an agent needs your input, such as a permission or a question.
+• Get a countdown before your Mac goes to sleep.
+• Keep awake or Sleep now, right from the notification.
+• See your Mac at a glance: what it's doing, each agent session, the battery, the lid and the countdown.
+• Look back over the last three days of alerts.
+• Several Macs on one Apple Account show up side by side.
+
+There's no pairing and no account. Use the same Apple Account on your iPhone and your Mac, and they find each other through iCloud. Alerts that need you are Time Sensitive, so they get through Focus.
+
+Works with Claude Code, Codex, Gemini CLI, Cursor, Copilot CLI, opencode, Aider, Windsurf and other coding agents running on your Mac.
+
+No analytics, no tracking, no ads. Alerts are deleted after three days.
+
+Requires Kakureneko for Mac on a Mac with macOS 26 or later, available at kakureneko.com. To look around first, open Settings in the app and choose See a demo.
+
+Kakureneko (隠れ猫) is Japanese for "hiding cat", like Soot, our cat, who keeps watch behind the closed lid.` },
+    keywords: { label: 'Keywords', limit: 100,
+      text: 'ai,llm,developer,notify,lid,closed,awake,sleep,laptop,terminal,cli,remote,status,battery,hiding,cat',
+      note: 'No spaces. Words already in the name and subtitle are left out, and so are other companies\' trademarks (guideline 2.3.7).' },
+    support: { label: 'Support URL', text: 'https://kakureneko.com/support/' },
+    marketing: { label: 'Marketing URL', text: 'https://kakureneko.com/' },
+    privacy: { label: 'Privacy Policy URL', text: 'https://kakureneko.com/privacy/' },
+    category: { label: 'Category', text: 'Primary: Developer Tools · Secondary: Utilities' },
+    whatsnew: { label: 'What to Test (TestFlight)', limit: 4000, text:
+`The first version of Kakureneko for iPhone.
+
+• Alerts from Kakureneko on your Mac when an agent finishes, needs you, or the Mac is about to sleep.
+• Keep awake and Sleep now, from the notification or the app.
+• Your Mac's status, agents, battery and countdown at a glance.
+• The last three days of alerts.
+• A demo with a sample Mac, in Settings.` }
+  };
+  const SHOTS = ['01-lid-closed', '02-needs-you', '03-countdown', '04-activity', '05-several-macs', '06-no-account'];
+
+  // Apple counts characters as the user sees them (grapheme clusters), so 隠れ猫 is 3.
+  const seg = new Intl.Segmenter('en', { granularity: 'grapheme' });
+  const length = s => [...seg.segment(s)].length;
+
+  document.querySelectorAll('[data-src]').forEach(el => { el.textContent = F[el.dataset.src].text; });
+
+  const fields = document.getElementById('fields');
+  for (const [key, f] of Object.entries(F)) {
+    const n = length(f.text);
+    const box = document.createElement('section');
+    box.className = 'field';
+    box.innerHTML = `<div class="field-head"><h3></h3><span class="count"></span><button class="copy" type="button">Copy</button></div><pre class="value"></pre>`;
+    box.querySelector('h3').textContent = f.label;
+    const count = box.querySelector('.count');
+    count.textContent = f.limit ? `${n} / ${f.limit}` : '';
+    if (f.limit && n > f.limit) count.classList.add('over');
+    box.querySelector('.value').textContent = f.text;
+    if (f.note) {
+      const p = document.createElement('p');
+      p.className = 'note';
+      p.textContent = f.note;
+      box.append(p);
+    }
+    const button = box.querySelector('button');
+    button.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(f.text); button.textContent = 'Copied'; }
+      catch { button.textContent = 'Select and copy'; }
+      setTimeout(() => { button.textContent = 'Copy'; }, 1600);
+    });
+    fields.append(box);
+  }
+
+  const strip = document.getElementById('strip');
+  const files = document.getElementById('files');
+  SHOTS.forEach((name, i) => {
+    const a = document.createElement('a');
+    a.href = `screenshots/${name}.png`;
+    a.innerHTML = `<img src="screenshots/${name}.png" width="1320" height="2868" loading="lazy" alt="App Store screenshot ${i + 1}">`;
+    strip.append(a);
+    const li = document.createElement('li');
+    li.innerHTML = `<a href="screenshots/${name}.png">${name}.png</a>`;
+    files.append(li);
+  });
+</script>
+</body>
+</html>

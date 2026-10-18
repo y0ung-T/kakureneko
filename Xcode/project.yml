@@ -1,0 +1,153 @@
+# XcodeGen spec for the Apple-platform pieces SwiftPM cannot build (docs/NATIVE-NOTIFICATIONS.md):
+#   * KakurenekoPhone            — the iPhone app (alerts from the Mac over iCloud, status, buttons)
+#   * KakurenekoPhoneAlerts      — its Notification Service Extension (formats each CloudKit alert push)
+#   * KakurenekoPhoneTests       — unit tests of the iPhone model layer (simulator, InMemoryCloudStore only; no host
+#                                app, so nothing ever talks to real iCloud). Run: scripts/build-phone.sh test
+#   * KakurenekoMacSigning       — a stub macOS app with the Mac app's bundle id and iCloud/push entitlements.
+#                                Built only so Xcode's automatic signing produces the Mac provisioning profile,
+#                                which scripts/build-app.sh embeds into the SwiftPM-built Kakureneko.app.
+# Generate with `xcodegen generate --spec Xcode/project.yml` (scripts/build-phone.sh does it for you).
+# Everything is called Kakureneko (DECISIONS D13): bundle ids com.kakureneko.*, the iCloud container
+# iCloud.com.kakureneko.Kakureneko, the targets, the project and the KAKURENEKO_WEBSITE_URL setting.
+name: Kakureneko
+options:
+  bundleIdPrefix: com.kakureneko
+  deploymentTarget:
+    iOS: "18.0"
+    macOS: "26.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+settings:
+  base:
+    DEVELOPMENT_TEAM: 7NRW73MYQZ
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    SWIFT_STRICT_CONCURRENCY: complete
+# Swift settings of the iPhone targets (the package's KakurenekoCloud uses the same upcoming features).
+settingGroups:
+  phoneSwift:
+    SWIFT_APPROACHABLE_CONCURRENCY: YES
+    SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY: YES
+packages:
+  Kakureneko:
+    path: ..
+targets:
+  KakurenekoPhone:
+    type: application
+    platform: iOS
+    sources:
+      - path: ../iPhone/App
+    dependencies:
+      - target: KakurenekoPhoneAlerts
+        embed: true
+      - package: Kakureneko
+        product: KakurenekoCloud
+    scheme:
+      testTargets:
+        - KakurenekoPhoneTests
+    # Merged with the generated Info.plist (GENERATE_INFOPLIST_FILE): background modes have no INFOPLIST_KEY_ setting,
+    # and without remote-notification iOS never wakes the app for zone-v1 silent pushes.
+    info:
+      path: ../iPhone/App/Info.plist
+      properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UIBackgroundModes: [remote-notification]
+        # The website the app links to (privacy policy, support, the Mac app): AppLinks / WebsiteLinks.
+        KakurenekoWebsiteURL: $(KAKURENEKO_WEBSITE_URL)
+    settings:
+      groups: [phoneSwift]
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kakureneko.Kakureneko
+        PRODUCT_NAME: Kakureneko
+        # The website. The app links to <this>/privacy/, <this>/support/ and <this>/ (Get Kakureneko for Mac); App
+        # Store Connect needs the same privacy policy and support URLs. scripts/build-phone.sh overrides it with
+        # WEBSITE_URL from scripts/release.env when that is set.
+        KAKURENEKO_WEBSITE_URL: https://kakureneko.com
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        # The home-screen name.
+        INFOPLIST_KEY_CFBundleDisplayName: Kakureneko
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    entitlements:
+      path: ../iPhone/App/KakurenekoPhone.entitlements
+      properties:
+        aps-environment: development
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.kakureneko.Kakureneko]
+        com.apple.developer.icloud-services: [CloudKit]
+        com.apple.developer.usernotifications.time-sensitive: true
+  KakurenekoPhoneAlerts:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: ../iPhone/NotificationService
+    dependencies:
+      - package: Kakureneko
+        product: KakurenekoCloud
+    info:
+      path: ../iPhone/NotificationService/Info.plist
+      properties:
+        CFBundleDisplayName: Kakureneko Alerts
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.usernotifications.service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).NotificationService
+    settings:
+      groups: [phoneSwift]
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kakureneko.Kakureneko.alerts
+        PRODUCT_NAME: KakurenekoPhoneAlerts
+        TARGETED_DEVICE_FAMILY: "1"
+    entitlements:
+      path: ../iPhone/NotificationService/KakurenekoPhoneAlerts.entitlements
+      properties:
+        # No time-sensitive key here: only the app may hold it (the extension's interruption level uses the app's).
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.kakureneko.Kakureneko]
+        com.apple.developer.icloud-services: [CloudKit]
+  KakurenekoPhoneTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: ../iPhone/Tests
+      # The model layer is compiled into the test bundle itself (no host app): launching the app would start the
+      # live CloudKitStore on the simulator.
+      - path: ../iPhone/App/Model
+    dependencies:
+      - package: Kakureneko
+        product: KakurenekoCloud
+    settings:
+      groups: [phoneSwift]
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kakureneko.KakurenekoPhoneTests
+        PRODUCT_NAME: KakurenekoPhoneTests
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: YES
+  KakurenekoMacSigning:
+    type: application
+    platform: macOS
+    sources:
+      - path: ../Resources/MacSigningHost
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.kakureneko.Kakureneko
+        PRODUCT_NAME: KakurenekoMacSigning
+        GENERATE_INFOPLIST_FILE: YES
+        ENABLE_HARDENED_RUNTIME: YES
+    entitlements:
+      path: ../Resources/MacSigningHost/KakurenekoMacSigning.entitlements
+      properties:
+        com.apple.developer.aps-environment: development
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.kakureneko.Kakureneko]
+        com.apple.developer.icloud-services: [CloudKit]
+        com.apple.developer.usernotifications.time-sensitive: true
+        com.apple.security.automation.apple-events: true

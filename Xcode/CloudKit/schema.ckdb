@@ -1,0 +1,118 @@
+// Kakureneko's CloudKit schema (docs/NATIVE-NOTIFICATIONS.md §3), applied with scripts/cloudkit-schema.sh.
+//
+// Every Kakureneko record lives in the PUBLIC database: storage comes from the app's allowance, not the user's iCloud.
+// Privacy: each type is readable and writable by its creator only (no "_world" read), so only the Apple Account that
+// saved a record can read it. Indexes: `owner` (queries and subscriptions), the modification time (change queries)
+// and the creator (CloudKit filters every query on it because of the creator-only read role); nothing else. Field list = what KakurenekoCloud.CloudRecordCoding writes plus
+// `owner` (KakurenekoCloudTests checks they agree).
+DEFINE SCHEMA
+
+    RECORD TYPE Alert (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE QUERYABLE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP QUERYABLE SORTABLE,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        actions         LIST<STRING>,
+        body            STRING,
+        createdAt       INT64,
+        expiresAt       INT64,
+        interruption    STRING,
+        kind            STRING,
+        macID           STRING,
+        macName         STRING,
+        owner           STRING QUERYABLE,
+        replaceKey      STRING,
+        schema          INT64,
+        sv              INT64,
+        threadID        STRING,
+        title           STRING,
+        GRANT READ, WRITE TO "_creator",
+        GRANT CREATE TO "_icloud"
+    );
+
+    RECORD TYPE Command (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE QUERYABLE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP QUERYABLE SORTABLE,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        alertID         STRING,
+        createdAt       INT64,
+        deviceID        STRING,
+        deviceName      STRING,
+        expiresAt       INT64,
+        macID           STRING,
+        owner           STRING QUERYABLE,
+        request         STRING,
+        schema          INT64,
+        sv              INT64,
+        GRANT READ, WRITE TO "_creator",
+        GRANT CREATE TO "_icloud"
+    );
+
+    RECORD TYPE MacStatus (
+        "___createTime"  TIMESTAMP,
+        "___createdBy"   REFERENCE QUERYABLE,
+        "___etag"        STRING,
+        "___modTime"     TIMESTAMP QUERYABLE SORTABLE,
+        "___modifiedBy"  REFERENCE,
+        "___recordID"    REFERENCE QUERYABLE,
+        agentsJSON       STRING,
+        appVersion       STRING,
+        batteryPercent   INT64,
+        canSleep         INT64,
+        countdownEndsAt  INT64,
+        detail           STRING,
+        headline         STRING,
+        keepAwakeSeconds INT64,
+        keepAwakeUntil   INT64,
+        lidClosed        INT64,
+        macID            STRING,
+        macName          STRING,
+        model            STRING,
+        onBattery        INT64,
+        owner            STRING QUERYABLE,
+        phase            STRING,
+        schema           INT64,
+        shutdownEnabled  INT64,
+        sv               INT64,
+        updatedAt        INT64,
+        GRANT READ, WRITE TO "_creator",
+        GRANT CREATE TO "_icloud"
+    );
+
+    RECORD TYPE PhoneDevice (
+        "___createTime"      TIMESTAMP,
+        "___createdBy"       REFERENCE QUERYABLE,
+        "___etag"            STRING,
+        "___modTime"         TIMESTAMP QUERYABLE SORTABLE,
+        "___modifiedBy"      REFERENCE,
+        "___recordID"        REFERENCE QUERYABLE,
+        alertsAuthorized     INT64,
+        appVersion           STRING,
+        deviceID             STRING,
+        lastSeenAt           INT64,
+        model                STRING,
+        name                 STRING,
+        owner                STRING QUERYABLE,
+        schema               INT64,
+        systemVersion        STRING,
+        timeSensitiveAllowed INT64,
+        GRANT READ, WRITE TO "_creator",
+        GRANT CREATE TO "_icloud"
+    );
+
+    RECORD TYPE Users (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE,
+        roles           LIST<INT64>,
+        GRANT WRITE TO "_creator",
+        GRANT READ TO "_world"
+    );

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kakureneko: your agents keep working with the lid closed</title>
+  <meta name="description" content="Kakureneko is a menu bar app for Mac. It keeps the Mac awake while AI coding agents work, even with the lid closed, then lets it sleep and tells your iPhone.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F4F2EC" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1A1915" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://kakureneko.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kakureneko">
+  <meta property="og:title" content="Kakureneko">
+  <meta property="og:description" content="Close the lid. Your agents keep working.">
+  <meta property="og:url" content="https://kakureneko.com/">
+  <meta property="og:image" content="https://kakureneko.com/assets/icon/app-icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="The Kakureneko app icon: Soot, a black cat, sitting on a closed MacBook.">
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/icon/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <div class="bar">
+        <a class="brand" href="./" aria-current="page">
+          <picture>
+            <source srcset="assets/wordmark-light.svg" media="(prefers-color-scheme: dark)">
+            <img src="assets/wordmark.svg" width="548" height="82" alt="Kakureneko home">
+          </picture>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <ul>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="iphone/">iPhone app</a></li>
+            <li><a href="support/">Support</a></li>
+            <li><a href="privacy/">Privacy</a></li>
+          </ul>
+        </nav>
+        <a class="btn btn-primary header-cta" href="download/Kakureneko.dmg">Download</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Hero: one sentence beside the product itself (the Mac menu behind, the iPhone in front) -->
+    <section class="hero hero--full" aria-labelledby="hero-title">
+      <div class="wrap">
+        <div>
+          <span class="chip"><span class="dot dot--working" aria-hidden="true"></span>A menu bar app for Mac, with an iPhone app</span>
+          <h1 id="hero-title">Close the lid. Your agents keep working.</h1>
+          <p class="lead">While Claude Code, Codex or another coding agent works, Kakureneko keeps your Mac awake, even with the lid closed. When they're done, it lets the Mac sleep again, and your iPhone tells you.</p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="download/Kakureneko.dmg">Download for Mac</a>
+            <a class="btn btn-secondary" href="iphone/">Get the iPhone app</a>
+          </div>
+          <p class="hero-meta">macOS 26 or later · Apple silicon or Intel</p>
+        </div>
+        <div class="panel panel--working hero-stage">
+          <picture>
+            <source srcset="assets/shots/mac-menu-dark.png" media="(prefers-color-scheme: dark)">
+            <img class="stage-menu" src="assets/shots/mac-menu.png" width="680" height="954" alt="The Kakureneko menu on the Mac: it stays awake with the lid closed, one agent working and one waiting for permission.">
+          </picture>
+          <span class="phone">
+            <picture>
+              <source srcset="assets/shots/phone/working-dark.jpg" media="(prefers-color-scheme: dark)">
+              <img src="assets/shots/phone/working.jpg" width="764" height="1660" alt="Kakureneko on iPhone: the Mac is awake with the lid closed and two agents are working.">
+            </picture>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statement -->
+    <section class="section" aria-label="Why Kakureneko">
+      <div class="wrap">
+        <p class="statement rise">Coding agents work for hours. <span class="dim">Your Mac falls asleep the moment you close the lid.</span> Kakureneko keeps it awake while they work, lets it sleep when they're done, and tells your iPhone what happened.</p>
+      </div>
+    </section>
+
+    <!-- Feature rows: the real screens, big -->
+    <div class="wrap features">
+
+      <section class="feature" aria-labelledby="f-menu">
+        <div class="feature-text rise">
+          <span class="pill pill--working"><span class="dot dot--working" aria-hidden="true"></span>On your Mac</span>
+          <h2 id="f-menu">Everything in one menu.</h2>
+          <p>Every agent session, what it's doing and for how long. Whether the Mac will stay awake with the lid closed. Which apps were slowed down to save the battery. One click to keep it awake longer, or sleep now.</p>
+          <ul class="chips" aria-label="Shows">
+            <li class="chip"><span class="dot dot--working" aria-hidden="true"></span>Working</li>
+            <li class="chip"><span class="dot dot--waiting" aria-hidden="true"></span>Waiting for you</li>
+            <li class="chip"><span class="dot" aria-hidden="true"></span>Paused apps</li>
+          </ul>
+        </div>
+        <div class="panel panel--working feature-panel rise">
+          <picture>
+            <source srcset="assets/shots/mac-menu-dark.png" media="(prefers-color-scheme: dark)">
+            <img class="mac-menu" src="assets/shots/mac-menu.png" width="680" height="954" loading="lazy" alt="The Kakureneko menu: the Mac stays awake with the lid closed, one agent working and one waiting for permission, one app slowed down.">
+          </picture>
+        </div>
+      </section>
+
+      <section class="feature feature--flip" aria-labelledby="f-lid">
+        <div class="feature-text rise">
+          <span class="pill pill--working"><span class="dot dot--working" aria-hidden="true"></span>Lid closed, still working</span>
+          <h2 id="f-lid">Close the lid and go.</h2>
+          <p>While an agent works, the Mac stays awake with the lid closed. Other apps are slowed down so the battery lasts, and your iPhone shows what the Mac is doing: each agent, the battery, the lid.</p>
+          <ul class="chips" aria-label="Details">
+            <li class="chip">Stays awake only while agents work</li>
+            <li class="chip">Slows other apps on battery</li>
+          </ul>
+        </div>
+        <div class="panel panel--working feature-panel rise">
+          <span class="phone">
+            <picture>
+              <source srcset="assets/shots/phone/working-dark.jpg" media="(prefers-color-scheme: dark)">
+              <img src="assets/shots/phone/working.jpg" width="764" height="1660" loading="lazy" alt="Kakureneko on iPhone: lid closed, two agents working, battery at 76 percent.">
+            </picture>
+          </span>
+        </div>
+      </section>
+
+      <section class="feature" aria-labelledby="f-wait">
+        <div class="feature-text rise">
+          <span class="pill pill--waiting"><span class="dot dot--waiting" aria-hidden="true"></span>Waiting for you</span>
+          <h2 id="f-wait">Know when an agent needs you.</h2>
+          <p>A permission, a question: your iPhone tells you which agent is stuck and on what. These alerts are Time Sensitive, so they get through Focus. Keep awake holds the Mac for an hour while you get to it.</p>
+          <ul class="chips" aria-label="On the alert">
+            <li class="chip">Time Sensitive</li>
+            <li class="chip">Keep awake 1h</li>
+            <li class="chip">Sleep now</li>
+          </ul>
+        </div>
+        <div class="panel panel--waiting feature-panel feature-panel--alert rise">
+          <div class="float-alert" aria-label="Example alert">
+            <img class="icon" src="assets/icon/apple-touch-icon.png" width="180" height="180" alt="">
+            <div>
+              <b>Codex needs your input</b>
+              <span>Studio</span>
+              <span class="body">website · Needs permission to run npm install</span>
+            </div>
+            <img class="thumb" src="assets/shots/alert-wave.png" width="300" height="300" alt="">
+          </div>
+          <span class="phone">
+            <picture>
+              <source srcset="assets/shots/phone/waiting-dark.jpg" media="(prefers-color-scheme: dark)">
+              <img src="assets/shots/phone/waiting.jpg" width="764" height="1660" loading="lazy" alt="Kakureneko on iPhone: Codex needs permission to run npm install, Claude Code is still working.">
+            </picture>
+          </span>
+        </div>
+      </section>
+
+      <section class="feature feature--flip" aria-labelledby="f-sleep">
+        <div class="feature-text rise">
+          <span class="pill pill--drowsy"><span class="dot dot--drowsy" aria-hidden="true"></span>Sleeping soon</span>
+          <h2 id="f-sleep">Keep it awake, or let it sleep.</h2>
+          <p>With the lid closed, the Mac sleeps five minutes after the last agent finishes. Before it does, you get a countdown, with Keep awake and Sleep now right on the alert and in the app.</p>
+          <ul class="chips" aria-label="Buttons">
+            <li class="chip">Keep awake</li>
+            <li class="chip">Sleep now</li>
+            <li class="chip">Shut down, if you allow it</li>
+          </ul>
+        </div>
+        <div class="panel panel--drowsy feature-panel rise">
+          <span class="phone">
+            <picture>
+              <source srcset="assets/shots/phone/countdown-dark.jpg" media="(prefers-color-scheme: dark)">
+              <img src="assets/shots/phone/countdown.jpg" width="764" height="1660" loading="lazy" alt="Kakureneko on iPhone: all agents are done, the Mac sleeps in 4:24, with Keep awake 1h, Sleep now and Shut down.">
+            </picture>
+          </span>
+        </div>
+      </section>
+
+      <section class="feature" aria-labelledby="f-activity">
+        <div class="feature-text rise">
+          <span class="pill pill--finished"><span class="dot dot--finished" aria-hidden="true"></span>Activity</span>
+          <h2 id="f-activity">The last three days, in one list.</h2>
+          <p>Every alert from your Macs, grouped by day: who finished and how long it took, who waited, when the Mac slept. Several Macs on one Apple Account show up side by side.</p>
+          <ul class="chips" aria-label="Kinds of alerts">
+            <li class="chip"><span class="dot dot--finished" aria-hidden="true"></span>Finished</li>
+            <li class="chip"><span class="dot dot--waiting" aria-hidden="true"></span>Needs you</li>
+            <li class="chip"><span class="dot dot--drowsy" aria-hidden="true"></span>Slept</li>
+          </ul>
+        </div>
+        <div class="panel panel--finished feature-panel rise">
+          <span class="phone">
+            <picture>
+              <source srcset="assets/shots/phone/activity-dark.jpg" media="(prefers-color-scheme: dark)">
+              <img src="assets/shots/phone/activity.jpg" width="764" height="1660" loading="lazy" alt="The Activity tab on iPhone: today Codex needed input and Claude Code finished; yesterday the Mac slept.">
+            </picture>
+          </span>
+        </div>
+      </section>
+    </div>
+
+    <!-- How it works -->
+    <section class="section" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section-intro rise">
+          <p class="label">How it works</p>
+          <h2 id="how-title">Set it up once, then just close the lid.</h2>
+        </div>
+        <ol class="steps">
+          <li class="rise">
+            <h3>Install closed-lid mode</h3>
+            <p>Open Kakureneko and approve one administrator prompt. It lets the app switch sleep off and on, and adds a fail-safe that switches it back on.</p>
+          </li>
+          <li class="rise">
+            <h3>Connect your agents</h3>
+            <p>Kakureneko adds a small hook to each agent's settings, so it knows when one starts, waits or finishes. You see every change before it's made.</p>
+          </li>
+          <li class="rise">
+            <h3>Close the lid and go</h3>
+            <p>While an agent works, the Mac stays awake. Other apps are slowed down so the battery lasts.</p>
+          </li>
+          <li class="rise">
+            <h3>It sleeps when they're done</h3>
+            <p>Five minutes after the last agent finishes. If an agent is waiting for you instead, your iPhone tells you first.</p>
+          </li>
+        </ol>
+        <div class="panel panel--idle wide-shot rise">
+          <picture>
+            <source srcset="assets/shots/mac-setup-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="assets/shots/mac-setup.png" width="1520" height="1320" loading="lazy" alt="The first step of Kakureneko's setup on the Mac: closed-lid mode, with Install and Skip.">
+          </picture>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wordmark band: the name, Soot's poses, what the name means -->
+    <section class="band band-word" aria-labelledby="word-title">
+      <div class="wrap">
+        <h2 id="word-title" class="visually-hidden">Kakureneko, the hiding cat</h2>
+        <img class="word rise" src="assets/wordmark-light.svg" width="548" height="82" alt="kakureneko">
+        <div class="poses rise" aria-hidden="true">
+          <img src="assets/mascot/sit-sticker.svg" alt="" loading="lazy">
+          <img src="assets/mascot/peek-sticker.svg" alt="" loading="lazy">
+          <img src="assets/mascot/hide-sticker.svg" alt="" loading="lazy">
+          <img src="assets/mascot/coffee-sticker.svg" alt="" loading="lazy">
+          <img src="assets/mascot/wave-sticker.svg" alt="" loading="lazy">
+          <img src="assets/mascot/sleep-sticker.svg" alt="" loading="lazy">
+        </div>
+        <p class="meaning"><span lang="ja">隠れ猫</span> is Japanese for "hiding cat". Soot keeps watch behind the closed lid.</p>
+      </div>
+    </section>
+
+    <!-- Safety -->
+    <section class="section" aria-labelledby="safety-title">
+      <div class="wrap">
+        <div class="section-intro rise">
+          <p class="label">Careful by default</p>
+          <h2 id="safety-title">Awake, but not at any cost.</h2>
+          <p>A closed Mac in a bag gets warm and runs flat. Kakureneko stops before that happens.</p>
+        </div>
+        <dl class="stats rise">
+          <div><dt>20&nbsp;%</dt><dd>Battery at which it lets the Mac sleep. You can set 10–50&nbsp;%.</dd></div>
+          <div><dt>12&nbsp;h</dt><dd>Longest it keeps the Mac awake with the lid closed.</dd></div>
+          <div><dt>3&nbsp;min</dt><dd>If the app stops answering, a system service turns sleep back on.</dd></div>
+          <div><dt>7&nbsp;%</dt><dd>Battery at which sleep comes back on, whatever else is going on.</dd></div>
+        </dl>
+        <div class="grid grid--3" style="margin-top:16px">
+          <div class="card rise">
+            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="17" height="10" rx="2.5"/><path d="M21.5 10.5v3"/><path d="M5.5 10v4"/></svg></span>
+            <h3>Safety stops</h3>
+            <p>It also sleeps when the Mac runs hot, or when the network has been gone for 15 minutes.</p>
+          </div>
+          <div class="card rise">
+            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg></span>
+            <h3>A reminder on the lid</h3>
+            <p>Close the lid on battery and it plays a sound: a reminder not to put a running Mac in a bag.</p>
+          </div>
+          <div class="card rise">
+            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.5 3.2 8.2 7.5 9.5 4.3-1.3 7.5-5 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <h3>Never the wrong app</h3>
+            <p>Apps that run or talk to an agent, play audio or download are never slowed down.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- iPhone + privacy -->
+    <section class="section" aria-labelledby="iphone-title">
+      <div class="wrap split">
+        <div class="rise">
+          <p class="label">iPhone app</p>
+          <h2 id="iphone-title">No pairing. No account.</h2>
+          <p>Use the same Apple Account on your Mac and iPhone, and they find each other through iCloud. Several Macs show up side by side.</p>
+          <div class="btn-row">
+            <a class="btn btn-secondary" href="iphone/">About the iPhone app</a>
+          </div>
+        </div>
+        <div class="rise">
+          <p class="label">Privacy</p>
+          <h2 id="privacy-title">No server of our own.</h2>
+          <p>Your Mac and iPhone talk through Apple's iCloud. Other iCloud users can't read what they send, and alerts are deleted after three days. No analytics, no tracking, no ads.</p>
+          <p><a href="privacy/">Read the privacy policy</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Requirements -->
+    <section class="section" id="requirements" aria-labelledby="req-title">
+      <div class="wrap">
+        <div class="section-intro rise">
+          <p class="label">Requirements</p>
+          <h2 id="req-title">What you need.</h2>
+        </div>
+        <dl class="reqs">
+          <div class="rise">
+            <dt>A Mac</dt>
+            <dd>macOS 26 or later, on Apple silicon or Intel. Closed-lid mode is for MacBooks and needs an administrator password once.</dd>
+          </div>
+          <div class="rise">
+            <dt>A coding agent</dt>
+            <dd>Claude Code, Codex, Gemini CLI, Cursor, Copilot CLI, opencode, Aider, Windsurf, Antigravity, Factory Droid, Qwen Code and others. Agents without a hook are recognised from their processes.</dd>
+          </div>
+          <div class="rise">
+            <dt>An iPhone (optional)</dt>
+            <dd>iOS 18 or later, signed in to the same Apple Account as the Mac, with iCloud on.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Closing band -->
+    <section class="panel panel--working band-cta" aria-labelledby="cta-title">
+      <div class="cta-card rise">
+        <picture>
+          <source srcset="assets/mascot/coffee-sticker.svg" media="(prefers-color-scheme: dark)">
+          <img class="pose" src="assets/mascot/coffee.svg" width="400" height="400" alt="Soot, wide awake, holding a mug with a lightning bolt on it.">
+        </picture>
+        <h2 id="cta-title">Let the agents work late.</h2>
+        <p>Download Kakureneko for Mac, then get the iPhone app if you want alerts on the go.</p>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="download/Kakureneko.dmg">Download for Mac</a>
+          <a class="btn btn-secondary" href="iphone/">iPhone app</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <picture>
+          <source srcset="assets/wordmark-light.svg" media="(prefers-color-scheme: dark)">
+          <img src="assets/wordmark.svg" width="548" height="82" alt="Kakureneko">
+        </picture>
+        <nav aria-label="Footer">
+          <ul>
+            <li><a href="./">Home</a></li>
+            <li><a href="iphone/">iPhone app</a></li>
+            <li><a href="support/">Support</a></li>
+            <li><a href="privacy/">Privacy</a></li>
+          </ul>
+        </nav>
+      </div>
+      <p>Kakureneko (<span lang="ja">隠れ猫</span>) is Japanese for "hiding cat", like Soot behind a closed lid.</p>
+      <p>Agent names belong to their owners. Kakureneko isn't affiliated with them. Apple, Mac, iPhone and iCloud are trademarks of Apple Inc.</p>
+    </div>
+  </footer>
+</body>
+</html>
