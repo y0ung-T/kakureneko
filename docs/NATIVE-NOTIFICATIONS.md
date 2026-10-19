@@ -149,6 +149,9 @@ least every 5 min while running. Before it goes dark it reports a final status �
 shut down, or off (quit) — which then stays the reported status until the Mac wakes (or the wind-down is cancelled),
 so the publishes that still follow cannot turn "asleep" back into "going to sleep". Older than 12 min (and not asleep / off) = "not
 responding" on the phone. `refresh` commands make the Mac republish at once (the app sends one when opened).
+Until an iPhone has checked in (no `PhoneDevice` record, `NotificationDispatcher.hasPhone`), the status is bare —
+name, model, version, phase and settings, headline "Connecting to your iPhone…", no agents, battery or lid — and no
+alerts are queued for iCloud; the first iPhone record (or the last one leaving) re-saves the status at once.
 
 ### 4.4 Polling (Mac)
 Fetch changes on every silent push (plus two quick re-fetches 3 s apart: the query index lags behind saves), every 15 s while an actionable alert is unexpired or the app was

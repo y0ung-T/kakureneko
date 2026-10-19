@@ -64,7 +64,7 @@ struct RobustnessTests {
     }
 
     @Test func aSaveThatIgnoresCancellationStillTimesOut() async throws {
-        let cloud = InMemoryCloudStore()
+        let cloud = InMemoryCloudStore(seed: [.device(Fixtures.phone)])
         let hanging = SuspendingCloudStore(wrapping: cloud, ignoresCancellation: true)
         let h = try Harness(cloud: cloud, store: hanging)
         defer { h.cleanup() }
@@ -86,7 +86,7 @@ struct RobustnessTests {
     }
 
     @Test func stoppingDuringASaveKeepsTheAlertForTheNextLaunch() async throws {
-        let cloud = InMemoryCloudStore()
+        let cloud = InMemoryCloudStore(seed: [.device(Fixtures.phone)])
         let hanging = SuspendingCloudStore(wrapping: cloud)
         let h = try Harness(cloud: cloud, store: hanging)
         defer { h.cleanup() }
@@ -133,7 +133,7 @@ struct RobustnessTests {
     }
 
     @Test func aFullRefetchForgetsDeletedPhones() async throws {
-        let h = try Harness()
+        let h = try Harness(phone: false)
         defer { h.cleanup() }
         try await h.startReady()
         func phone(_ id: String) -> PhoneDevice {

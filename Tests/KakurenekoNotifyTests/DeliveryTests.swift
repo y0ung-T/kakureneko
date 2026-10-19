@@ -394,7 +394,7 @@ struct DeliveryTests {
     }
 
     @Test func drainReturnsAtTheDeadlineWhileABackgroundSaveHangs() async throws {
-        let cloud = InMemoryCloudStore()
+        let cloud = InMemoryCloudStore(seed: [.device(Fixtures.phone)])
         let hanging = SuspendingCloudStore(wrapping: cloud)
         let h = try Harness(cloud: cloud, store: hanging)
         defer { h.cleanup() }
@@ -421,7 +421,7 @@ struct DeliveryTests {
     }
 
     @Test func drainWaitsForAnAttemptInFlightThatSucceeds() async throws {
-        let cloud = InMemoryCloudStore()
+        let cloud = InMemoryCloudStore(seed: [.device(Fixtures.phone)])
         let hanging = SuspendingCloudStore(wrapping: cloud)
         let h = try Harness(cloud: cloud, store: hanging)
         defer { h.cleanup() }
@@ -447,7 +447,7 @@ struct DeliveryTests {
     }
 
     @Test func aHangingSaveTimesOutAndIsRetried() async throws {
-        let cloud = InMemoryCloudStore()
+        let cloud = InMemoryCloudStore(seed: [.device(Fixtures.phone)])
         let hanging = SuspendingCloudStore(wrapping: cloud)
         let h = try Harness(cloud: cloud, store: hanging)
         defer { h.cleanup() }
@@ -472,7 +472,7 @@ struct DeliveryTests {
     // MARK: Dry run, timers, stop
 
     @Test func dryRunSavesNothingButStillReads() async throws {
-        let cloud = InMemoryCloudStore(zoneExists: true)
+        let cloud = InMemoryCloudStore(zoneExists: true, seed: [.device(Fixtures.phone)])
         let ledger = DryRunLedger(clock: TestClock())
         let gated = DryRunCloudStore(passthrough: cloud, gate: .alwaysOn(), ledger: ledger)
         let h = try Harness(cloud: cloud, store: gated)
@@ -480,7 +480,7 @@ struct DeliveryTests {
         try await h.startReady()
         _ = await h.dispatcher.submit(Self.stalled(), context: Fixtures.context())
         #expect(await eventually { await h.dispatcher.status().lastDeliveredAt != nil })
-        #expect(await cloud.allItems.isEmpty, "nothing was saved for real")
+        #expect(await cloud.allItems.map(\.id) == [CloudItem.device(Fixtures.phone).id], "nothing was saved for real (the iPhone was there before)")
         #expect(await cloud.subscriptions.isEmpty)
         #expect(ledger.entries(action: "cloud.save").first?.detail == "would save 1 iCloud record(s) (Alert)")
         #expect(ledger.entries(action: "cloud.subscribe").count == 1)

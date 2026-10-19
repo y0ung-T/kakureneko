@@ -239,7 +239,7 @@ struct CloudSyncTests {
     // MARK: Phones
 
     @Test func phonesAppearAndDisappear() async throws {
-        let h = try Harness()
+        let h = try Harness(phone: false)
         defer { h.cleanup() }
         try await h.startReady()
         #expect(await !h.dispatcher.status().phoneConnected)
@@ -271,7 +271,7 @@ struct CloudSyncTests {
     }
 
     @Test func anIPhoneCanBeRemovedFromTheList() async throws {
-        let h = try Harness()
+        let h = try Harness(phone: false)
         defer { h.cleanup() }
         try await h.startReady()
         try await h.cloud?.save([.device(phone()), .device(phone("p2"))])
@@ -283,8 +283,34 @@ struct CloudSyncTests {
         await h.dispatcher.stop()
     }
 
+    @Test func beforeAnyIPhoneOnlyABareStatusGoesToICloud() async throws {
+        let h = try Harness(phone: false)
+        defer { h.cleanup() }
+        try await h.startReady()
+        await h.dispatcher.updateMacStatus(report())
+        _ = await h.dispatcher.submit(.stalled(SessionEffect(kind: .stalled, session: Fixtures.claude(), at: Fixtures.start)),
+                                      context: Fixtures.context())
+        #expect(await eventually { await h.statuses.count == 1 })
+        #expect(await eventually { h.posted.count == 1 }, "the Mac still shows its alerts")
+        await settle()
+        let bare = try #require(await h.statuses.first)
+        #expect(bare.macName == "Studio" && bare.phase == .working, "what the iPhone's setup needs to find this Mac")
+        #expect(bare.agents.isEmpty && bare.headline == NotificationDispatcher.bareHeadline)
+        #expect(bare.batteryPercent == nil && bare.detail == nil)
+        #expect(await h.saved.isEmpty, "no alert text goes to iCloud before an iPhone checked in")
+
+        // The iPhone checks in: the full status goes at once, and alerts follow.
+        try await h.cloud?.save([.device(phone())])
+        await h.dispatcher.cloudDidNotify()
+        #expect(await eventually { await h.statuses.first?.agents.map(\.project) == ["api"] })
+        _ = await h.dispatcher.submit(.stalled(SessionEffect(kind: .stalled, session: Fixtures.claude(id: "c-2"), at: Fixtures.start)),
+                                      context: Fixtures.context())
+        #expect(await eventually { await h.saved.count == 1 })
+        await h.dispatcher.stop()
+    }
+
     @Test func anotherAppleAccountStartsOver() async throws {
-        let h = try Harness()
+        let h = try Harness(phone: false)
         defer { h.cleanup() }
         try await h.startReady()
         try await h.cloud?.save([.device(phone())])

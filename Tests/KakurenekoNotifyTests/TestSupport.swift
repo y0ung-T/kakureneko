@@ -22,6 +22,9 @@ enum Fixtures {
         return settings
     }
     static let preview = "Refactored the parser; all 42 tests pass."
+    /// The iPhone the harness connects by default (`Harness(phone:)`).
+    static let phone = PhoneDevice(deviceID: "phone-default", name: "iPhone", model: "iPhone18,3", systemVersion: "26.6",
+                                   appVersion: "1.0", alertsAuthorized: true, timeSensitiveAllowed: true, lastSeenAt: start)
 
     static func at(_ hour: Int, _ minute: Int, dayOffset: Int = 0) -> Date {
         var calendar = Calendar(identifier: .gregorian)
@@ -93,16 +96,25 @@ final class Harness: Sendable {
     let environment: NotifyEnvironment
 
     /// `store` replaces `cloud` as the dispatcher's iCloud (e.g. a dry-run gate or a `SuspendingCloudStore` in front
-    /// of it); `noCloud` builds without iCloud.
+    /// of it); `noCloud` builds without iCloud. `phone`: an iPhone already checked in (its record in a fresh home
+    /// and the default iCloud), as alerts only go to iCloud once one did.
     init(settings: NotificationSettings = NotificationSettings(), paths: Paths? = nil, clock: TestClock? = nil,
          cloud: InMemoryCloudStore? = nil, store: (any CloudStore)? = nil, noCloud: Bool = false,
-         local: RecordingLocalNotifications? = nil, online: Bool = true,
+         local: RecordingLocalNotifications? = nil, online: Bool = true, phone: Bool = true,
          configure: (inout NotifyEnvironment) -> Void = { _ in }) throws {
+        let freshHome = paths == nil
         let paths = try paths ?? Paths.temporary()
         self.paths = paths
         let testClock = clock ?? TestClock()
         self.clock = testClock
-        self.cloud = noCloud ? nil : (cloud ?? InMemoryCloudStore(now: { testClock.now() }))
+        let seed: [CloudItem] = phone ? [.device(Fixtures.phone)] : []
+        self.cloud = noCloud ? nil : (cloud ?? InMemoryCloudStore(seed: seed, now: { testClock.now() }))
+        if phone && freshHome && !noCloud {
+            let store = NotifyStore(paths: paths)
+            var state = store.loadState()
+            state.phones = [Fixtures.phone.deviceID: Fixtures.phone]
+            try store.saveState(state)
+        }
         self.local = local ?? RecordingLocalNotifications()
         self.pathMonitor = ManualPathMonitor(initial: online)
         self.settings = settings

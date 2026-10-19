@@ -522,7 +522,7 @@ public actor NotificationDispatcher: NotificationDispatching {
     /// Alerts may be queued for the iPhone: the setting is on, this build has iCloud, and the account is not known
     /// to be missing (while it is being checked, alerts wait in the outbox).
     private var canQueueForPhone: Bool {
-        guard settings.phoneAlerts, cloud != nil else { return false }
+        guard settings.phoneAlerts, cloud != nil, hasPhone else { return false }
         switch accountStatus {
         case .noAccount, .restricted, .unavailableInThisBuild: return false
         case .available, .temporarilyUnavailable, .couldNotDetermine: return true
@@ -530,7 +530,20 @@ public actor NotificationDispatcher: NotificationDispatching {
     }
 
     /// The outbox may be saved to iCloud now.
-    private var canSaveToCloud: Bool { cloud != nil && cloudReady && settings.phoneAlerts && accountStatus.isAvailable }
+    private var canSaveToCloud: Bool {
+        cloud != nil && cloudReady && settings.phoneAlerts && hasPhone && accountStatus.isAvailable
+    }
+
+    /// An iPhone has checked in (its `PhoneDevice` record). Until then nothing an alert says goes to iCloud: only the
+    /// bare status the iPhone's setup needs to find this Mac (`saveStatus`), and no alerts.
+    private var hasPhone: Bool { !state.phones.isEmpty }
+
+    /// The first iPhone arrived or the last one left: the status switches between bare and full at once.
+    private func phonePresenceMayHaveChanged(hadPhone: Bool) {
+        guard hadPhone != hasPhone else { return }
+        logger.notice(hasPhone ? "an iPhone is connected: saving the full status" : "no iPhone left: only a bare status goes to iCloud")
+        if canSaveStatus, latestReport != nil { scheduleStatusSave(immediately: true) }
+    }
 
     private func refreshMacAuthorization() async {
         let (authorization, timeSensitive) = await local.authorization()
@@ -1183,15 +1196,19 @@ public actor NotificationDispatcher: NotificationDispatching {
             phones[device.deviceID] = device
         }
         for gone in state.phones.keys where phones[gone] == nil { logger.notice("an iPhone left the list") }
+        let hadPhone = hasPhone
         state.phones = phones
+        phonePresenceMayHaveChanged(hadPhone: hadPhone)
     }
 
     /// Settings → Notifications → an iPhone → Remove: its record leaves iCloud (it comes back if that iPhone opens
     /// the app again).
     public func forgetPhone(deviceID: String) async {
         ensureLoaded()
+        let hadPhone = hasPhone
         state.phones[deviceID] = nil
         persistState()
+        phonePresenceMayHaveChanged(hadPhone: hadPhone)
         guard let cloud, canReachCloud else { return }
         let id = CloudItemID(recordType: CloudSchema.RecordType.phoneDevice, recordName: CloudSchema.RecordNamePrefix.phoneDevice + deviceID)
         do throws(CloudError) {
@@ -1354,17 +1371,21 @@ public actor NotificationDispatcher: NotificationDispatching {
     }
 
     /// Saves the latest report as this Mac's `MacStatus` within `limit` seconds (no-op until iCloud is ready;
-    /// setup saves it then).
+    /// setup saves it then). Before any iPhone checked in it is a bare status: the Mac's name, model and phase (the
+    /// iPhone's setup looks for it) without agents, projects, battery or lid.
     private func saveStatus(limit: TimeInterval?) async {
         guard let cloud, canSaveStatus, let report = latestReport else { return }
         reportedPhase = report.phase
         let now = clock.now()
+        let full = hasPhone
         let status = MacStatus(
-            macID: state.macID, macName: identity.name, model: identity.model, phase: report.phase, headline: report.headline,
-            detail: report.detail, countdownEndsAt: report.countdownEndsAt, keepAwakeUntil: report.keepAwakeUntil,
-            agents: report.agents, batteryPercent: report.batteryPercent, onBattery: report.onBattery, lidClosed: report.lidClosed,
-            stateVersion: report.stateVersion, keepAwakeSeconds: report.keepAwakeSeconds, shutdownEnabled: report.shutdownEnabled,
-            canSleep: report.canSleep, updatedAt: now, appVersion: identity.appVersion)
+            macID: state.macID, macName: identity.name, model: identity.model, phase: report.phase,
+            headline: full ? report.headline : Self.bareHeadline,
+            detail: full ? report.detail : nil, countdownEndsAt: full ? report.countdownEndsAt : nil,
+            keepAwakeUntil: full ? report.keepAwakeUntil : nil, agents: full ? report.agents : [],
+            batteryPercent: full ? report.batteryPercent : nil, onBattery: full && report.onBattery,
+            lidClosed: full && report.lidClosed, stateVersion: report.stateVersion, keepAwakeSeconds: report.keepAwakeSeconds,
+            shutdownEnabled: report.shutdownEnabled, canSleep: report.canSleep, updatedAt: now, appVersion: identity.appVersion)
         switch await Self.save([.status(status)], to: cloud, clock: clock, limit: limit ?? environment.sendTimeout) {
         case .some(.success):
             savedReport = report
@@ -1382,6 +1403,9 @@ public actor NotificationDispatcher: NotificationDispatching {
             logger.notice("saving the Mac status timed out")
         }
     }
+
+    /// The bare status' headline (the iPhone shows it until this Mac has seen the iPhone's record, normally seconds).
+    static let bareHeadline = "Connecting to your iPhone…"
 
     // MARK: - Pruning
 

@@ -35,12 +35,18 @@ public actor InMemoryCloudStore: CloudStore {
     public var accountTagValue = "account-a"
 
     /// `now`: the "server" clock behind modification times (tests pass their test clock).
+    /// `seed`: records already in the database (saved before the test starts, at `now()`).
     public init(account: CloudAccountStatus = .available, zoneExists: Bool = false, pageSize: Int = 200,
-                now: @escaping @Sendable () -> Date = { Date() }) {
+                seed: [CloudItem] = [], now: @escaping @Sendable () -> Date = { Date() }) {
         self.account = account
         self.zoneExists = zoneExists
         self.pageSize = max(1, pageSize)
         self.now = now
+        for item in seed {
+            sequence += 1
+            records[item.id] = (CloudRecordCoding.record(for: item), sequence)
+            modifiedAt[item.id] = now()
+        }
     }
 
     // MARK: Test controls

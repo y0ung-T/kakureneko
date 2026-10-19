@@ -44,7 +44,7 @@
     Facts in this policy were checked against the code on 2026-10-18:
     Xcode/CloudKit/schema.ckdb (record types, fields, creator-only roles), Sources/KakurenekoCloud (Models, Schema),
     Sources/KakurenekoNotify (Templates: alert text per detail level; NotificationDispatcher: alerts pruned after
-    3 days, commands deleted once handled, MacStatus saved only while iPhone alerts are on and deleted with the
+    3 days, commands deleted once handled, MacStatus saved only while iPhone alerts are on, bare and no alerts until an iPhone checked in, deleted with the
     alerts when they're turned off or at Uninstall), Sources/KakurenekoCoordinator/
     PhoneStatusBuilder.swift (agent list in the status; no project/app names at Private), iPhone/App (PhoneDevice record, 3-day Activity),
     Sparkle 2.10.0 (default user agent "Kakureneko/<version> Sparkle/<version>", no system profile unless enabled).
@@ -121,7 +121,7 @@
         <p>The records are tied to a random identifier that iCloud gives your Apple Account for Kakureneko. We can't see your name or email address from it. Your Mac's name is included, though, and it often contains a first name (for example "Alex's MacBook Pro"). You can change it in System Settings → General → Sharing.</p>
 
         <h3>When iCloud is used</h3>
-        <p>Kakureneko for Mac writes to iCloud only while "Send alerts to your iPhone" is on (Settings → Notifications; it's on by default) and the Mac is signed in to iCloud. Then it keeps the Mac's status record up to date and writes alerts when their timing allows, by default only while the lid is closed. Turning that setting off deletes the Mac's status record and the alerts it saved, and nothing more is written until you turn it on again.</p>
+        <p>Kakureneko for Mac writes to iCloud only while "Send alerts to your iPhone" is on (Settings → Notifications; it's on by default) and the Mac is signed in to iCloud. Until an iPhone with Kakureneko has connected, it writes only a bare status (the Mac's name, model and Kakureneko's version, and whether it's awake), so the iPhone app can find the Mac, and no alerts. Once an iPhone has connected, it keeps the Mac's full status record up to date and writes alerts when their timing allows, by default only while the lid is closed. Turning that setting off deletes the Mac's status record and the alerts it saved, and nothing more is written until you turn it on again.</p>
         <p>Kakureneko for iPhone uses iCloud as soon as you open it on an iPhone that's signed in to iCloud.</p>
 
         <h3>What the records contain</h3>
@@ -142,7 +142,7 @@
                 <td data-label="Record"><strong>Mac status</strong></td>
                 <td data-label="Written by">Your Mac, while Kakureneko runs</td>
                 <td data-label="What it holds">Your Mac's name and model, Kakureneko's version, what Kakureneko is doing (for example "Lid closed · 2 agents working"), the sleep countdown, the battery level, whether it's on battery, whether the lid is closed, your Keep awake and shut-down settings, and the agent sessions that are running: the agent's name, the project folder's name, the app it runs in, what it's doing and since when.</td>
-                <td data-label="Kept">One record per Mac, replaced on every change. When Kakureneko quits or the Mac sleeps, it's replaced by a short status without the agent list. Deleted when you turn off "Send alerts to your iPhone", uninstall Kakureneko, tap Remove on the iPhone, or after 30 days without an update.</td>
+                <td data-label="Kept">One record per Mac, replaced on every change. Before any iPhone has connected, it holds only the Mac's name, model, Kakureneko's version and settings, and what Kakureneko is doing, without the agents, battery or lid. When Kakureneko quits or the Mac sleeps, it's replaced by a short status without the agent list. Deleted when you turn off "Send alerts to your iPhone", uninstall Kakureneko, tap Remove on the iPhone, or after 30 days without an update.</td>
               </tr>
               <tr>
                 <td data-label="Record"><strong>Command</strong></td>

@@ -55,7 +55,7 @@ struct PrivilegedScriptsTests {
         #expect(template.contains("HB='__HEARTBEAT_PATH__'"))
         #expect(template.contains("MAX_AGE=150"))
         #expect(template.contains("HARD_FLOOR=7"))
-        #expect(template.contains(#"[ "$(rd SleepDisabled)" = "Yes" ] || exit 0"#))
+        #expect(template.contains(#"if [ "$(rd SleepDisabled)" != "Yes" ]; then          # nothing to protect"#))
         #expect(template.contains("$PMSET -a disablesleep 0"))
         #expect(template.contains(#"[ "$(rd AppleClamshellState)" = "Yes" ] && $PMSET sleepnow"#))
         #expect(template.contains("kern.boottime"))
@@ -206,6 +206,36 @@ struct PrivilegedScriptsTests {
         let result = try await runTool("/bin/bash", ["-c", script])
         #expect(result.exitCode == 0)
         #expect(result.stdoutString == input.reason)
+    }
+
+    /// The fail-safe's own lid-closed heat and time limits (a backstop above the app's): exactly the template's
+    /// snippet with synthetic values. Empty = unknown (an unreadable level, no file yet): never a reason.
+    @Test(arguments: [
+        (thermal: "0", hot: "", closed: "1000000", now: 1_000_600, reason: ""),
+        (thermal: "", hot: "", closed: "", now: 1_000_600, reason: ""),
+        (thermal: "3", hot: "", closed: "1000000", now: 1_000_060, reason: "thermal pressure level 3"),
+        (thermal: "2", hot: "1000000", closed: "1000000", now: 1_000_600, reason: ""),
+        (thermal: "2", hot: "1000000", closed: "1000000", now: 1_000_901, reason: "thermal pressure heavy for 901s"),
+        (thermal: "1", hot: "", closed: "1000000", now: 1_000_000 + 24 * 3600, reason: ""),
+        (thermal: "1", hot: "", closed: "1000000", now: 1_000_000 + 25 * 3600 + 1, reason: "lid closed for 25h"),
+    ])
+    func safetyVerdict(_ input: (thermal: String, hot: String, closed: String, now: Int, reason: String)) async throws {
+        let template = Self.generator.failsafeScriptTemplate
+        #expect(template.contains(PrivilegedScriptGenerator.safetyVerdict))
+        #expect(template.contains(PrivilegedScriptGenerator.safetyLimits))
+        let script = PrivilegedScriptGenerator.safetyLimits
+            + "; thermal=\"\(input.thermal)\"; hot=\"\(input.hot)\"; closed=\"\(input.closed)\"; now=\(input.now); reason=\"\"\n"
+            + PrivilegedScriptGenerator.safetyVerdict + "\nprintf '%s' \"$reason\""
+        let result = try await runTool("/bin/bash", ["-c", script])
+        #expect(result.exitCode == 0, "\(result.stderrString)")
+        #expect(result.stdoutString == input.reason)
+    }
+
+    @Test func theFailsafesOwnClocksAreRootOnlyAndRemovedOnUninstall() {
+        #expect(PrivilegedScriptGenerator.closedSinceFile.hasPrefix("/var/run/"), "root-only and cleared at boot")
+        #expect(PrivilegedScriptGenerator.hotSinceFile.hasPrefix("/var/run/"))
+        #expect(Self.generator.uninstallScript.contains(PrivilegedScriptGenerator.closedSinceFile))
+        #expect(Self.generator.uninstallScript.contains(PrivilegedScriptGenerator.hotSinceFile))
     }
 
     @Test func heartbeatPathParser() {
