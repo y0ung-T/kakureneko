@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Kakureneko</title>
+    <item>
+      <title>Kakureneko 1.0.0</title>
+      <pubDate>Thu, 22 Oct 2026 21:51:00 GMT</pubDate>
+      <sparkle:version>202610222142</sparkle:version>
+      <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>https://github.com/y0ung-T/kakureneko/releases/tag/v1.0.0</sparkle:fullReleaseNotesLink>
+      <enclosure url="https://github.com/y0ung-T/kakureneko/releases/download/v1.0.0/Kakureneko-1.0.0.dmg" type="application/octet-stream" sparkle:edSignature="jCyglS7zGzP75YRu9680AniiTyTLA8/pq53gw1D8WUtgRlTAp7ef4+2SIvQuDaONVVuV9pKBa39Avq7SNTImBA==" length="13831396" />
+    </item>
+  </channel>
+</rss>
