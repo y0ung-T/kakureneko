@@ -42,7 +42,7 @@ enum MacSetupText {
     static let macButton = "Set up my iPhone"
     static let macSetting = "Settings → Notifications → Send alerts to your iPhone"
 
-    /// "kakureneko.com" for the Mac download link (host and path, no scheme or trailing slash).
+    /// "github.com/y0ung-T/kakureneko" for the Mac download link (host and path, no scheme or trailing slash).
     static func display(_ url: URL) -> String {
         var text = (url.host() ?? url.absoluteString) + url.path()
         while text.hasSuffix("/") { text.removeLast() }

@@ -170,7 +170,7 @@ private struct GeneralPane: View {
     }
 }
 
-/// Version, Sparkle (Developer ID builds) and the website's links.
+/// Version, Sparkle (Developer ID builds) and the GitHub repository's links.
 private struct UpdatesAndAboutSection: View {
     let model: AppModel
 
@@ -188,7 +188,7 @@ private struct UpdatesAndAboutSection: View {
             }
             if links.website != nil {
                 HStack(spacing: 16) {
-                    if let website = links.website { Link("Website", destination: website) }
+                    if let website = links.website { Link("GitHub", destination: website) }
                     if let privacy = links.privacyPolicy { Link("Privacy policy", destination: privacy) }
                     if let support = links.support { Link("Support", destination: support) }
                 }

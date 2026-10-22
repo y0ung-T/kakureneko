@@ -178,23 +178,23 @@ struct DemoTests {
 struct WebsiteLinksTests {
     @Test(arguments: [nil, "", "  ", "$(KAKURENEKO_WEBSITE_URL)", "example.org", "ftp://example.org", "https://",
                       "https://example.org/?a=1"] as [String?])
-    func aMissingOrMalformedValueFallsBackToTheProductWebsite(_ value: String?) {
+    func aMissingOrMalformedValueFallsBackToTheRepository(_ value: String?) {
         let links = WebsiteLinks(infoValue: value)
         #expect(links.home == WebsiteLinks.fallback)
-        #expect(links.home.absoluteString == "https://kakureneko.com/")
-        #expect(links.privacyPolicy.absoluteString == "https://kakureneko.com/privacy/")
-        #expect(links.support.absoluteString == "https://kakureneko.com/support/")
+        #expect(links.home.absoluteString == "https://github.com/y0ung-T/kakureneko/")
+        #expect(links.privacyPolicy.absoluteString == "https://github.com/y0ung-T/kakureneko/blob/main/PRIVACY.md")
+        #expect(links.support.absoluteString == "https://github.com/y0ung-T/kakureneko/issues")
     }
 
     @Test func pagesHangOffTheWebsite() {
         let links = WebsiteLinks(infoValue: "https://example.org")
         #expect(links.home.absoluteString == "https://example.org/")
-        #expect(links.privacyPolicy.absoluteString == "https://example.org/privacy/")
-        #expect(links.support.absoluteString == "https://example.org/support/")
+        #expect(links.privacyPolicy.absoluteString == "https://example.org/blob/main/PRIVACY.md")
+        #expect(links.support.absoluteString == "https://example.org/issues")
 
         let nested = WebsiteLinks(infoValue: "https://example.com/kakureneko/")
         #expect(nested.home.absoluteString == "https://example.com/kakureneko/")
-        #expect(nested.privacyPolicy.absoluteString == "https://example.com/kakureneko/privacy/")
+        #expect(nested.privacyPolicy.absoluteString == "https://example.com/kakureneko/blob/main/PRIVACY.md")
     }
 
     @Test func aNonStringValueFallsBack() {

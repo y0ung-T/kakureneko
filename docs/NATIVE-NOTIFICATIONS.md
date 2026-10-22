@@ -208,7 +208,7 @@ arrives (the Mac's `MacStatus`, the iPhone's `PhoneDevice`), and each side quote
 |---|---|---|
 | Other side already set up | "iPhone · seen just now", and when alerts reach it | "Connected to <Mac>": Send a test alert, Done |
 | Nothing yet | "Get alerts on your iPhone too?" **Set up my iPhone** / **Just this Mac** | "Is Kakureneko on your Mac?" **Yes, it's on my Mac** / **Not yet** |
-| Chose to connect | QR code to the iPhone app, three steps ("tap Yes, it's on my Mac"), waiting; after 45 s "Not showing up?" | Yes: "click the cat… choose Set up my iPhone", waiting; after 45 s "Still waiting? What to check". Not yet: kakureneko.com with Send link / Copy link, "I've installed it" |
+| Chose to connect | QR code to the iPhone app, three steps ("tap Yes, it's on my Mac"), waiting; after 45 s "Not showing up?" | Yes: "click the cat… choose Set up my iPhone", waiting; after 45 s "Still waiting? What to check". Not yet: github.com/y0ung-T/kakureneko with Send link / Copy link, "I've installed it" |
 | Chose not to | Just this Mac turns iPhone alerts **off** (nothing about this Mac goes to iCloud); "Set up my iPhone" undoes it | Skip for now, or See a demo |
 
 The Mac must have "Send alerts to your iPhone" on for the iPhone to see it (§4: no status otherwise), which is why

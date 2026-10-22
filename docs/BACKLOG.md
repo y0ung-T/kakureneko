@@ -5,34 +5,15 @@ exact steps. Tick an item off by deleting it once it's done.
 
 ## Before release
 
-### 1. Website and App Store placeholders (release blocker)
+### 1. TestFlight beta (release blocker)
 
-Needs: your legal name, the publish date, an App Store Connect app record, a working support mailbox.
+Needs: App Store Connect.
 
-1. **Effective date**: `site/privacy/index.html` ("Effective date: REPLACE-ME") → the day you publish, e.g.
-   `19 October 2026`; delete the `<!-- TODO(release): date -->` comment.
-2. **Legal name**: the same name in
-   * `site/privacy/index.html` ("Kakureneko is made by REPLACE-ME"): your legal name or company; add a postal address
-     if you have EU/UK users; delete the TODO comment.
-   * `docs/APP-STORE.md` (Copyright `2026 REPLACE-ME`).
-   * `scripts/release.env`: `COPYRIGHT=`.
-3. **App Store link**
-   1. App Store Connect → Apps → + → New App (iOS, bundle id `com.kakureneko.Kakureneko`).
-   2. App Information → copy the **Apple ID** (a number; it exists before approval).
-   3. `site/iphone/index.html`: `idREPLACE-ME` → `id<number>` in the "Get it on the App Store" button, and turn the
-      TODO comment near the top into `<meta name="apple-itunes-app" content="app-id=<number>">`.
-   4. `scripts/release.env`: `IPHONE_APP_URL=https://apps.apple.com/app/id<number>`, then rebuild the Mac app
-      (`scripts/build-app.sh`): its QR code then opens the App Store directly.
-   * Order: the link only works once Apple approves the app. Ship the iPhone app first, then publish the site and the
-     Mac build — or, if the Mac app ships first, change the `/iphone/` button to "Coming soon to the App Store".
-   * Related: release builds never show the Mac's "Kakureneko for iPhone is coming to the App Store" line
-     (`NotificationSetupViews.swift`), because the website link is always set. Make it depend on
-     `IPHONE_APP_URL` being empty instead.
-4. **Support email**: `support@kakureneko.com` (privacy and support pages). Create the mailbox or forwarding
-   (registrar forwarding or iCloud+ Custom Email Domain) and send it a test mail. App Review may write to it.
-5. **Demo video for App Review**: `docs/APP-STORE.md` (`https://REPLACE-ME`). Record a short Mac + iPhone video,
-   upload it unlisted, paste the link.
-6. Check: `grep -rn "REPLACE-ME\|TODO(release)" site docs scripts` prints nothing.
+1. App Store Connect → Apps → + → New App (iOS, bundle id `com.kakureneko.Kakureneko`), if it doesn't exist yet.
+2. `scripts/build-phone.sh upload`, then TestFlight → Test Information: beta description, feedback email, privacy
+   policy URL `https://github.com/y0ung-T/kakureneko/blob/main/PRIVACY.md`.
+3. An external group for friends with the build (Beta App Review), then email invites or a public link.
+4. With a public link: put it in the README's iPhone section, and in `IPHONE_APP_URL` for the next Mac build.
 
 ## Needs a device
 

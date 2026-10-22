@@ -32,6 +32,7 @@ struct MacSetupTests {
     }
 
     @Test func theDownloadAddressReadsShort() {
+        #expect(MacSetupText.display(URL(string: "https://github.com/y0ung-T/kakureneko/")!) == "github.com/y0ung-T/kakureneko")
         #expect(MacSetupText.display(URL(string: "https://kakureneko.com/")!) == "kakureneko.com")
         #expect(MacSetupText.display(URL(string: "https://www.kakureneko.com/")!) == "kakureneko.com")
         #expect(MacSetupText.display(URL(string: "https://example.org/kakureneko/")!) == "example.org/kakureneko")

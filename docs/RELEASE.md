@@ -6,7 +6,9 @@ Apple account, your keychain or a decision, so agents never run them.
 ## Name
 
 The product is **Kakureneko** (隠れ猫, Japanese for "hiding cat"): "Kakureneko for Mac" (`Kakureneko.app`) and
-"Kakureneko for iPhone". The website is **https://kakureneko.com**.
+"Kakureneko for iPhone". There is no website: the project lives at **https://github.com/y0ung-T/kakureneko**
+(the README, `PRIVACY.md`, Issues for support, Releases for the Mac download). kakureneko.com was taken down on
+2026-10-22.
 
 The identifiers carry the same name (DECISIONS D13): the bundle ids (`com.kakureneko.Kakureneko` and friends), the
 iCloud container `iCloud.com.kakureneko.Kakureneko`, `~/.kakureneko`, the Claude Code plugin `kakureneko`, the system
@@ -17,10 +19,10 @@ files (`/etc/sudoers.d/kakureneko`, `/Library/LaunchDaemons/com.kakureneko.fails
 
 | | Mac app | iPhone app |
 |---|---|---|
-| Channel | Download from the website (`Kakureneko-<version>.dmg`) | App Store (TestFlight first) |
+| Channel | GitHub Releases (`Kakureneko-<version>.dmg`, and `Kakureneko.dmg` for the README's link) | TestFlight beta (external testers: friends) |
 | Signing | Developer ID Application, hardened runtime, notarized and stapled | App Store distribution (Xcode automatic signing) |
 | iCloud | CloudKit **Production**, production APNs | CloudKit **Production** |
-| Updates | Sparkle 2 (`site/updates/appcast.xml`, EdDSA-signed) | App Store |
+| Updates | Sparkle 2 (`appcast.xml` on `main`, EdDSA-signed) | TestFlight |
 | Runs on | macOS 26 or later, Apple silicon and Intel | iOS 18 or later |
 
 **Why not the Mac App Store.** Mac App Store apps must be sandboxed. In the sandbox Kakureneko couldn't:
@@ -34,7 +36,7 @@ A store version would be alerts only. Amphetamine handles this by sending users 
 helper. A direct download is the honest version of that.
 
 **Development vs. production.** `scripts/install.sh` (Apple Development) and `scripts/build-phone.sh install` use
-CloudKit **Development**. The website download and TestFlight/App Store builds use **Production**. The two never
+CloudKit **Development**. The GitHub download and TestFlight builds use **Production**. The two never
 see each other's data: test a TestFlight iPhone build with the downloaded Mac build, not with `install.sh`.
 
 ## One-time setup
@@ -57,38 +59,38 @@ see each other's data: test a TestFlight iPhone build with the downloaded Mac bu
    `com.kakureneko.Kakureneko`, saved to `build/release/DeveloperID.provisionprofile`. The command lists what the
    profile grants. If it doesn't grant Time Sensitive notifications, the build signs without that key (alerts still
    work, they just can't break through Focus).
-5. **The website (you deploy).**
-   - The domain is **kakureneko.com**. `scripts/release.env` already has `WEBSITE_URL=https://kakureneko.com`; the
-     Mac app's links, the update feed and the iPhone app's privacy and support links all derive from it. The site's
-     canonical and Open Graph tags use the same address.
-   - `site/` is a plain static site: index, `privacy/`, `support/`, `iphone/`, `download/`, `updates/`. Any static
-     host works (Vercel, Netlify, Cloudflare Pages, GitHub Pages). Point kakureneko.com's DNS at it and serve it from
-     the root of the domain (`404.html` links with root-relative paths).
-   - Serve `updates/appcast.xml` without long caching.
-   - Fill in the `TODO(release)` comments in `site/`: the policy's effective date, the legal name, the web host and
-     how long it keeps logs, the two commitments the policy asks you to confirm, and the App Store link.
-6. **Support address (you).** Set up `support@kakureneko.com` (Namecheap email forwarding to an inbox you read) and
-   send it a test. The support and privacy pages already show it, each with a `TODO(release)` reminder to remove
-   once it works.
-7. **Copyright (you).** Set `COPYRIGHT` in `scripts/release.env`, e.g. `© 2026 Your Name`.
+5. **GitHub (you).** The repository https://github.com/y0ung-T/kakureneko is public; `gh auth login` lets
+   `scripts/release-mac.sh publish` create the release.
+   - `WEBSITE_URL` in `scripts/release.env` is the repository. The apps derive their links from it: privacy
+     `<repo>/blob/main/PRIVACY.md`, support `<repo>/issues`, the iPhone app `<repo>/#iphone` (the README's iPhone
+     section) until `IPHONE_APP_URL` is set.
+   - `APPCAST_URL` is `appcast.xml` on `main` (raw.githubusercontent.com, cached about 5 minutes). The enclosures point
+     at the release assets (`<repo>/releases/download/v<version>/Kakureneko-<version>.dmg`).
+   - The old Vercel site is gone: the project `kakureneko` was deleted, and kakureneko.com is no longer attached to
+     anything (the domain stays registered at Namecheap until it lapses).
+6. **Copyright.** `COPYRIGHT="© 2026 y0ung-T"` in `scripts/release.env`.
+7. **TestFlight (you).** App Store Connect → the app → TestFlight:
+   - Test Information: a beta description, a feedback email, and the privacy policy URL
+     `https://github.com/y0ung-T/kakureneko/blob/main/PRIVACY.md`. "What to Test" is in
+     `marketing/app-store/index.html`.
+   - Add an external group ("Friends"), add a build to it (the first one goes through Beta App Review), then invite
+     testers by email or turn on a public link.
+   - A public link can go into `IPHONE_APP_URL` (`https://testflight.apple.com/join/…`) and the README; the Mac
+     onboarding's QR code then opens it directly. Without it, the QR code opens the README's iPhone section, which
+     can change at any time without a new Mac build.
 8. **CloudKit Production (you).** In the CloudKit Console, open `iCloud.com.kakureneko.Kakureneko` → Schema →
    **Deploy Schema Changes…** to Production. **Never click "Reset Environment".** Deploy again whenever
    `Xcode/CloudKit/schema.ckdb` changes; production only accepts additive changes.
    - **Then check Production's security roles.** Alert, Command, MacStatus and PhoneDevice should each give
      `_creator` read and write, `_icloud` create, and nothing to `_world`. The public database's default lets
      anyone read, so if the roles didn't deploy, anyone could read every record.
-9. **App Store Connect (you).**
-   - Create the app: platform iOS, bundle id `com.kakureneko.Kakureneko`, any SKU.
-   - Fill the listing from `docs/APP-STORE.md`: texts, privacy answers, review notes and the demo. Screenshots are
-     in `marketing/screenshots/iphone/`.
-   - Once the app is live, put its App Store URL in `IPHONE_APP_URL`. The Mac onboarding's QR code then opens the
-     App Store directly instead of the website's iPhone page.
 
 ## Each release
 
 1. Set `VERSION` in `scripts/release.env` (marketing version, shared by both apps). Leave `BUILD_NUMBER` empty: it
    becomes a UTC timestamp, so every build is newer than the last.
-2. Write the release notes to `site/updates/<VERSION>.html`. They're optional; the update window links to them.
+2. Write the release notes to `docs/release-notes/<VERSION>.md`. They're optional: they become the GitHub
+   Release's text, which the update window's "Version History" links to.
 3. **Mac:**
    - `scripts/release-mac.sh check` lists anything missing.
    - `scripts/release-mac.sh all` **(you)** does the following:
@@ -96,14 +98,15 @@ see each other's data: test a TestFlight iPhone build with the downloaded Mac bu
      - notarizes and staples `Kakureneko.app`;
      - builds the disk image, then signs, notarizes and staples it;
      - checks both with Gatekeeper;
-     - copies it to `site/download/Kakureneko-<version>.dmg` and `site/download/Kakureneko.dmg` (the website's
-       download buttons point at the latter);
-     - adds the signed entry to `site/updates/appcast.xml`.
-   - Deploy `site/`. Installed copies see the update within a day, or at once with "Check for Updates…".
-4. **iPhone:** `scripts/build-phone.sh upload` **(you)** archives and uploads to App Store Connect. Test it in
-   TestFlight with the downloaded Mac build, then submit it for review.
+     - creates the GitHub Release `v<version>` with `Kakureneko-<version>.dmg` and `Kakureneko.dmg` (the README links
+       `releases/latest/download/Kakureneko.dmg`);
+     - adds the signed entry to `appcast.xml`.
+   - Commit and push `appcast.xml`. Installed copies see the update within a day, or at once with "Check for
+     Updates…".
+4. **iPhone:** `scripts/build-phone.sh upload` **(you)** archives and uploads to App Store Connect. Once it has
+   processed, add it to the TestFlight group and test it with the downloaded Mac build.
 5. **Smoke test** on a Mac that never had Kakureneko (or a new user account):
-   - Download from the site, open the disk image and drag the app to Applications. Gatekeeper must say
+   - Download from GitHub Releases, open the disk image and drag the app to Applications. Gatekeeper must say
      "downloaded from the internet" and nothing worse.
    - Go through onboarding: closed-lid install, notifications, an agent hook, then "Open at login" and updates.
    - Close the lid with an agent working.
@@ -125,7 +128,7 @@ see each other's data: test a TestFlight iPhone build with the downloaded Mac bu
   4. When agents are done: sleep or shut down, plus "Open Kakureneko at login" (preset on) and "Check for updates
      automatically" (preset on, Developer ID builds only).
 - **The iPhone app** walks through notifications and iCloud, then asks "Is Kakureneko on your Mac?". "Not yet"
-  shows kakureneko.com with Send link / Copy link; "Yes" shows what to do on the Mac; both switch to "Connected to
+  shows the GitHub repository's address with Send link / Copy link; "Yes" shows what to do on the Mac; both switch to "Connected to
   <Mac>" when it appears (docs/NATIVE-NOTIFICATIONS.md §6b). App Review and curious users can tap "See a demo" there
   and in Settings.
 - **Updates:** a daily background check. A found update shows as a row in the menu ("Kakureneko 1.1 is available ·

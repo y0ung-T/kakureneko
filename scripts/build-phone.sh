@@ -19,7 +19,7 @@
 #   BUILD_NUMBER=…         → CURRENT_PROJECT_VERSION (CFBundleVersion); default: UTC `date -u +%Y%m%d%H%M`, so every
 #                            upload's build number is higher than the last
 #   WEBSITE_URL=https://…  → KAKURENEKO_WEBSITE_URL (the app's privacy / support / Mac links; every mode); default:
-#                            Xcode/project.yml's https://kakureneko.com
+#                            Xcode/project.yml's https://github.com/y0ung-T/kakureneko
 # Variables already set in the environment win over the file. Nothing else the file sets reaches this script.
 #
 # Env:

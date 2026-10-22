@@ -255,7 +255,7 @@ private struct OnboardingPhoneRows: View {
                     VStack(alignment: .leading, spacing: 8) {
                         numbered(1, AppLinks.iPhoneApp == nil
                                  ? "Install Kakureneko on your iPhone."
-                                 : "Scan the code with your iPhone's camera to get Kakureneko for iPhone (free).")
+                                 : "Scan the code with your iPhone's camera to get Kakureneko for iPhone (a free TestFlight beta).")
                         numbered(2, "Open it and follow its setup. When it asks whether Kakureneko is on your Mac, tap \u{201C}Yes, it's on my Mac\u{201D}.")
                         numbered(3, "Use the same Apple Account on both. This Mac finds the iPhone by itself.")
                         HStack(spacing: 6) {

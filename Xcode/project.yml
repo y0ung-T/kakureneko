@@ -56,17 +56,17 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UIBackgroundModes: [remote-notification]
-        # The website the app links to (privacy policy, support, the Mac app): AppLinks / WebsiteLinks.
+        # The GitHub repository the app links to (privacy policy, support, the Mac app): AppLinks / WebsiteLinks.
         KakurenekoWebsiteURL: $(KAKURENEKO_WEBSITE_URL)
     settings:
       groups: [phoneSwift]
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.kakureneko.Kakureneko
         PRODUCT_NAME: Kakureneko
-        # The website. The app links to <this>/privacy/, <this>/support/ and <this>/ (Get Kakureneko for Mac); App
-        # Store Connect needs the same privacy policy and support URLs. scripts/build-phone.sh overrides it with
-        # WEBSITE_URL from scripts/release.env when that is set.
-        KAKURENEKO_WEBSITE_URL: https://kakureneko.com
+        # The GitHub repository. The app links to <this>/blob/main/PRIVACY.md, <this>/issues and <this>/ (Get
+        # Kakureneko for Mac); TestFlight's test information uses the same privacy policy URL.
+        # scripts/build-phone.sh overrides it with WEBSITE_URL from scripts/release.env when that is set.
+        KAKURENEKO_WEBSITE_URL: https://github.com/y0ung-T/kakureneko
         TARGETED_DEVICE_FAMILY: "1"
         GENERATE_INFOPLIST_FILE: YES
         # The home-screen name.

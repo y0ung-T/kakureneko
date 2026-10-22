@@ -89,7 +89,7 @@ struct PhoneLinkRows: View {
                             .font(.callout)
                             .fixedSize(horizontal: false, vertical: true)
                         if AppLinks.iPhoneApp == nil {
-                            Text("Kakureneko for iPhone is coming to the App Store.")
+                            Text("Kakureneko for iPhone is a TestFlight beta.")
                                 .font(.caption)
                                 .foregroundStyle(Palette.ink2)
                         }

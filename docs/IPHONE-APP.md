@@ -8,7 +8,7 @@ the code. Everything CloudKit- or notification-shaped goes through the shared Sw
 
 People see **Kakureneko** (隠れ猫, "hiding cat"; DECISIONS D13): the home
 screen (`CFBundleDisplayName` Kakureneko; the notification extension's is Kakureneko Alerts), onboarding, Settings,
-empty states, notices and the website (https://kakureneko.com). The identifiers carry the same name: bundle ids
+empty states, notices and the GitHub repository (https://github.com/y0ung-T/kakureneko). The identifiers carry the same name: bundle ids
 `com.kakureneko.Kakureneko` and `.alerts`, the iCloud container `iCloud.com.kakureneko.Kakureneko`, the targets
 `KakurenekoPhone` / `KakurenekoPhoneAlerts` and the Xcode project `Kakureneko.xcodeproj`.
 
@@ -82,10 +82,10 @@ Simulator (`-KakurenekoDemo oneMac|working|waiting|countdown|severalMacs|stale|n
 
 ## Links
 
-`KAKURENEKO_WEBSITE_URL` (Xcode/project.yml, default `https://kakureneko.com`; `WEBSITE_URL` in scripts/release.env
-overrides it) → Info.plist `KakurenekoWebsiteURL` → `AppLinks`: privacy policy `<site>/privacy/`, support
-`<site>/support/`, Get Kakureneko for Mac `<site>/`. A missing or malformed value falls back to
-`https://kakureneko.com/` (`WebsiteLinks.fallback`).
+`KAKURENEKO_WEBSITE_URL` (Xcode/project.yml, default `https://github.com/y0ung-T/kakureneko`; `WEBSITE_URL` in
+scripts/release.env overrides it) → Info.plist `KakurenekoWebsiteURL` → `AppLinks`: privacy policy
+`<repo>/blob/main/PRIVACY.md`, support `<repo>/issues`, Get Kakureneko for Mac `<repo>/` (the README links the
+download). A missing or malformed value falls back to `https://github.com/y0ung-T/kakureneko/` (`WebsiteLinks.fallback`).
 
 ## Behaviour summary
 
@@ -131,9 +131,8 @@ overrides it) → Info.plist `KakurenekoWebsiteURL` → `AppLinks`: privacy poli
   since 9:16 AM" sits beside the status bar), the simulator set to en_US (`defaults write -g AppleLocale en_US` and
   `AppleLanguages (en-US)` via `simctl spawn`, then reboot it; otherwise the status bar reads 09:41), `xcrun simctl
   status_bar <udid> override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3`,
-  `xcrun simctl io <udid> screenshot`, then `scripts/flatten-png.swift` (no alpha). The website's half-size copies
-  (660 × 1434, `sips -Z 1434`): `site/assets/shots/iphone-mac.png` (01-working), `iphone-mac-dark.png`
-  (dark-01-working), `iphone-countdown.png` (02-countdown), `iphone-countdown-dark.png` (dark-02-countdown).
-* Before the first TestFlight build: deploy the CloudKit development schema to production, publish `/privacy/` and
-  `/support/` on https://kakureneko.com (the app's default; App Store Connect needs the same URLs), and tell App
-  Review about "See a demo" (the app needs the Mac app; the demo shows it without one).
+  `xcrun simctl io <udid> screenshot`, then `scripts/flatten-png.swift` (no alpha). The README's half-size copy
+  (660 × 1434, `sips -Z 1434`): `docs/images/iphone-mac.png` (01-working).
+* Before the first TestFlight build: deploy the CloudKit development schema to production, and tell Beta App Review
+  about "See a demo" (the app needs the Mac app; the demo shows it without one). The app's privacy and support links
+  are `PRIVACY.md` and Issues on https://github.com/y0ung-T/kakureneko (the app's default).

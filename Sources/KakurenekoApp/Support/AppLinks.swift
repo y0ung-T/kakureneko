@@ -1,15 +1,15 @@
-// The links the app opens or shows. The website and the iPhone app's App Store page come from Info.plist
-// (`KakurenekoWebsiteURL`, `KakurenekoIPhoneAppURL`), which scripts/build-app.sh fills from scripts/release.env, so a
-// domain or an App Store id changes in one place. Development builds without them show no links.
+// The links the app opens or shows. The project's GitHub repository and the iPhone app's TestFlight page come from
+// Info.plist (`KakurenekoWebsiteURL`, `KakurenekoIPhoneAppURL`), which scripts/build-app.sh fills from
+// scripts/release.env, so they change in one place. Development builds without them show no links.
 
 import KakurenekoKit
 import Foundation
 
 /// Links derived from an Info.plist dictionary (testable without a bundle).
 nonisolated struct ReleaseLinks: Sendable, Equatable {
-    /// The website root (download, privacy, support), or nil when this build has none.
+    /// The GitHub repository (download, privacy, support), or nil when this build has none.
     var website: URL?
-    /// The Kakureneko iPhone app's App Store (or public TestFlight) page; nil until it is published.
+    /// The Kakureneko iPhone app's public TestFlight (or App Store) page; nil until it is published.
     var iPhoneAppStore: URL?
 
     init(info: [String: Any]) {
@@ -17,10 +17,11 @@ nonisolated struct ReleaseLinks: Sendable, Equatable {
         iPhoneAppStore = Self.httpsURL(info["KakurenekoIPhoneAppURL"], directory: false)
     }
 
-    /// The page the onboarding's QR code and "Get the iPhone app" open: the App Store page, else the website's.
-    var iPhoneApp: URL? { iPhoneAppStore ?? page("iphone/") }
-    var privacyPolicy: URL? { page("privacy/") }
-    var support: URL? { page("support/") }
+    /// The page the onboarding's QR code and "Get the iPhone app" open: the TestFlight page, else the README's
+    /// iPhone section.
+    var iPhoneApp: URL? { iPhoneAppStore ?? page("#iphone") }
+    var privacyPolicy: URL? { page("blob/main/PRIVACY.md") }
+    var support: URL? { page("issues") }
 
     private func page(_ path: String) -> URL? {
         website.flatMap { URL(string: path, relativeTo: $0)?.absoluteURL }

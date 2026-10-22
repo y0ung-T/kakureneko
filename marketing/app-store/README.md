@@ -1,5 +1,7 @@
 # App Store kit (Kakureneko for iPhone)
 
+Not used: the iPhone app ships only as a TestFlight beta (docs/APP-STORE.md). Kept for reference.
+
 | | |
 |---|---|
 | `screenshots/` | The six App Store screenshots, 1320 × 2868 (6.9" display), opaque PNG, upload order = file order |

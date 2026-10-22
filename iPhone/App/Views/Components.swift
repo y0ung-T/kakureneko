@@ -6,17 +6,17 @@ import KakurenekoCloud
 import SwiftUI
 import UIKit
 
-/// Links the app opens. The website comes from the Info.plist (`KakurenekoWebsiteURL`, set from the
-/// `KAKURENEKO_WEBSITE_URL` build setting in Xcode/project.yml, or `WEBSITE_URL` in scripts/release.env); App Store
-/// Connect needs the same privacy policy and support URLs.
+/// Links the app opens. The GitHub repository comes from the Info.plist (`KakurenekoWebsiteURL`, set from the
+/// `KAKURENEKO_WEBSITE_URL` build setting in Xcode/project.yml, or `WEBSITE_URL` in scripts/release.env); TestFlight's
+/// test information uses the same privacy policy URL.
 enum AppLinks {
     static let website = WebsiteLinks(infoValue: Bundle.main.object(forInfoDictionaryKey: WebsiteLinks.infoKey))
 
-    /// <website>/privacy/
+    /// <repository>/blob/main/PRIVACY.md
     static var privacyPolicy: URL { website.privacyPolicy }
-    /// <website>/support/
+    /// <repository>/issues
     static var support: URL { website.support }
-    /// <website>/: where the Mac app is downloaded.
+    /// <repository>/: its README links the Mac app's download.
     static var macDownload: URL { website.home }
 
     /// This app's notification settings.

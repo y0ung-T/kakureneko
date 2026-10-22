@@ -12,17 +12,17 @@ import Testing
 struct ReleaseTests {
     // MARK: Links
 
-    @Test func linksComeFromTheWebsiteInInfoPlist() {
-        let links = ReleaseLinks(info: ["KakurenekoWebsiteURL": "https://kakureneko.example"])
-        #expect(links.website?.absoluteString == "https://kakureneko.example/")
-        #expect(links.privacyPolicy?.absoluteString == "https://kakureneko.example/privacy/")
-        #expect(links.support?.absoluteString == "https://kakureneko.example/support/")
-        #expect(links.iPhoneApp?.absoluteString == "https://kakureneko.example/iphone/", "the website's page until the App Store link exists")
+    @Test func linksComeFromTheRepositoryInInfoPlist() {
+        let links = ReleaseLinks(info: ["KakurenekoWebsiteURL": "https://github.com/someone/kakureneko"])
+        #expect(links.website?.absoluteString == "https://github.com/someone/kakureneko/")
+        #expect(links.privacyPolicy?.absoluteString == "https://github.com/someone/kakureneko/blob/main/PRIVACY.md")
+        #expect(links.support?.absoluteString == "https://github.com/someone/kakureneko/issues")
+        #expect(links.iPhoneApp?.absoluteString == "https://github.com/someone/kakureneko/#iphone", "the README until the TestFlight link exists")
 
-        let listed = ReleaseLinks(info: ["KakurenekoWebsiteURL": "https://kakureneko.example/",
-                                         "KakurenekoIPhoneAppURL": "https://apps.apple.com/app/id123"])
-        #expect(listed.iPhoneApp?.absoluteString == "https://apps.apple.com/app/id123")
-        #expect(listed.privacyPolicy?.absoluteString == "https://kakureneko.example/privacy/")
+        let listed = ReleaseLinks(info: ["KakurenekoWebsiteURL": "https://github.com/someone/kakureneko/",
+                                         "KakurenekoIPhoneAppURL": "https://testflight.apple.com/join/abc123"])
+        #expect(listed.iPhoneApp?.absoluteString == "https://testflight.apple.com/join/abc123")
+        #expect(listed.privacyPolicy?.absoluteString == "https://github.com/someone/kakureneko/blob/main/PRIVACY.md")
     }
 
     @Test func aBuildWithoutLinksShowsNone() {

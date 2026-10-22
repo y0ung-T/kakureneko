@@ -91,7 +91,7 @@ fat kakureneko-guard "$APP/Contents/Helpers/kakureneko-guard"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 plutil -replace CFBundleShortVersionString -string "$VERSION" "$APP/Contents/Info.plist"
 plutil -replace CFBundleVersion -string "$BUILD_NUMBER" "$APP/Contents/Info.plist"
-# Links (AppLinks.swift): every build that knows the website shows them; only Developer ID builds update themselves.
+# Links (AppLinks.swift): every build that knows the repository shows them; only Developer ID builds update themselves.
 if [[ -n "${WEBSITE_URL:-}" ]]; then
   plutil -replace KakurenekoWebsiteURL -string "$WEBSITE_URL" "$APP/Contents/Info.plist"
 fi
@@ -100,8 +100,9 @@ if [[ -n "${IPHONE_APP_URL:-}" ]]; then
 fi
 if [[ "$DISTRIBUTION" == "1" ]]; then
   [[ -n "${WEBSITE_URL:-}" ]] || { echo "DISTRIBUTION=1 needs WEBSITE_URL in scripts/release.env" >&2; exit 1; }
+  [[ -n "${APPCAST_URL:-}" ]] || { echo "DISTRIBUTION=1 needs APPCAST_URL in scripts/release.env" >&2; exit 1; }
   [[ -n "${SPARKLE_PUBLIC_KEY:-}" ]] || { echo "DISTRIBUTION=1 needs SPARKLE_PUBLIC_KEY: run scripts/release-mac.sh keys" >&2; exit 1; }
-  plutil -replace SUFeedURL -string "${WEBSITE_URL%/}/updates/appcast.xml" "$APP/Contents/Info.plist"
+  plutil -replace SUFeedURL -string "$APPCAST_URL" "$APP/Contents/Info.plist"
   plutil -replace SUPublicEDKey -string "$SPARKLE_PUBLIC_KEY" "$APP/Contents/Info.plist"
   # The app applies GeneralSettings.automaticUpdateChecks itself; this only keeps Sparkle from asking first.
   plutil -replace SUEnableAutomaticChecks -bool YES "$APP/Contents/Info.plist"

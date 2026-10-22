@@ -125,11 +125,12 @@ struct ProjectFilesTests {
         #expect(script.contains("hdiutil create"))
         #expect(script.contains("ln -s /Applications"))
         #expect(script.contains("sign_update"))
-        #expect(script.contains("site/updates/appcast.xml"))
+        #expect(script.contains("pathlib.Path(\"appcast.xml\")"))
+        #expect(script.contains("gh release create"))
         #expect(script.contains("<string>developer-id</string>"))
         #expect(!script.contains("sudo"))
         let env = try text("scripts/release.env")
-        for key in ["VERSION=", "BUILD_NUMBER=", "WEBSITE_URL=", "IPHONE_APP_URL=", "COPYRIGHT=", "SPARKLE_PUBLIC_KEY=",
+        for key in ["VERSION=", "BUILD_NUMBER=", "WEBSITE_URL=", "APPCAST_URL=", "IPHONE_APP_URL=", "COPYRIGHT=", "SPARKLE_PUBLIC_KEY=",
                     "NOTARY_PROFILE=", "TEAM_ID=7NRW73MYQZ"] {
             #expect(env.contains("\n\(key)"), "\(key)")
         }

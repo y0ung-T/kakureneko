@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Release the Mac app: Developer ID build → notarized, stapled Kakureneko.app and Kakureneko-<version>.dmg → Sparkle
-# appcast entry in site/updates/appcast.xml (docs/RELEASE.md). OWNER: agent "app".
+# Release the Mac app: Developer ID build → notarized, stapled Kakureneko.app and Kakureneko-<version>.dmg → GitHub
+# Release v<version> with the disk image → Sparkle appcast entry in appcast.xml (docs/RELEASE.md). OWNER: agent "app".
 #
-# HUMAN-RUN: `notarize` and `all` upload to Apple's notary service; `keys` and `profile` use your keychain and your
-# Xcode account. Automated agents only run `check`.
+# HUMAN-RUN: `notarize` and `all` upload to Apple's notary service and `publish` to GitHub; `keys` and `profile` use
+# your keychain and your Xcode account. Automated agents only run `check`.
 #
 # Usage: scripts/release-mac.sh <command>
 #   check     what's ready and what's missing (Developer ID identity, profile, notary profile, Sparkle key, settings)
@@ -14,10 +14,12 @@
 #             KakurenekoMacSigning stub and exports it with method developer-id → build/release/DeveloperID.provisionprofile
 #   build     DISTRIBUTION=1 scripts/build-app.sh (universal, Developer ID, production iCloud)
 #   notarize  notarize + staple the app, make the disk image, sign it, notarize + staple it, verify with Gatekeeper
-#   publish   copy the disk image into site/download/ and add the signed update to site/updates/appcast.xml
+#   publish   attach the disk image to the GitHub Release v<version> (gh; created if missing) as
+#             Kakureneko-<version>.dmg and Kakureneko.dmg, and add the signed update to appcast.xml. Commit and push
+#             appcast.xml afterwards: installed copies read it from the main branch (APPCAST_URL).
 #   all       check, build, notarize, publish
-# Settings: scripts/release.env (VERSION, WEBSITE_URL, SPARKLE_PUBLIC_KEY, NOTARY_PROFILE, TEAM_ID, COPYRIGHT).
-# Release notes: site/updates/<VERSION>.html when it exists (linked from the update window).
+# Settings: scripts/release.env (VERSION, WEBSITE_URL, APPCAST_URL, SPARKLE_PUBLIC_KEY, NOTARY_PROFILE, TEAM_ID,
+# COPYRIGHT). Release notes: docs/release-notes/<VERSION>.md when it exists (the GitHub Release's text).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -71,13 +73,15 @@ check() {
     echo "      xcrun notarytool store-credentials $NOTARY_PROFILE --apple-id <your Apple Account> --team-id $TEAM_ID"
   fi
   if [[ -n "${SPARKLE_PUBLIC_KEY:-}" ]]; then ok "Sparkle public key"; else todo "no Sparkle key: scripts/release-mac.sh keys"; fi
-  if [[ -n "${WEBSITE_URL:-}" ]]; then ok "website: $WEBSITE_URL"; else todo "WEBSITE_URL is empty in scripts/release.env"; fi
+  if [[ -n "${WEBSITE_URL:-}" ]]; then ok "repository: $WEBSITE_URL"; else todo "WEBSITE_URL is empty in scripts/release.env"; fi
+  if [[ -n "${APPCAST_URL:-}" ]]; then ok "update feed: $APPCAST_URL"; else todo "APPCAST_URL is empty in scripts/release.env"; fi
+  if gh auth status >/dev/null 2>&1; then ok "GitHub CLI signed in"; else todo "gh isn't signed in: gh auth login"; fi
   if [[ -n "${COPYRIGHT:-}" ]]; then ok "copyright: $COPYRIGHT"; else todo "COPYRIGHT is empty in scripts/release.env"; fi
   if [[ -n "${IPHONE_APP_URL:-}" ]]; then ok "iPhone app: $IPHONE_APP_URL"; else
-    echo "  · IPHONE_APP_URL is empty: the Mac app links to the website's /iphone/ page (fine until the App Store listing)"
+    echo "  · IPHONE_APP_URL is empty: the Mac app links to the README's iPhone section (fine without a TestFlight link)"
   fi
-  if [[ -f "site/updates/${VERSION:-}.html" ]]; then ok "release notes site/updates/$VERSION.html"; else
-    echo "  · no site/updates/${VERSION:-<version>}.html: the update window shows no release notes"
+  if [[ -f "docs/release-notes/${VERSION:-}.md" ]]; then ok "release notes docs/release-notes/$VERSION.md"; else
+    echo "  · no docs/release-notes/${VERSION:-<version>}.md: the GitHub Release gets a one-line description"
   fi
   return "$missing"
 }
@@ -155,7 +159,9 @@ notarize_file() {
 
 notarize() {
   [[ -d "$APP" ]] || { echo "no $APP: run scripts/release-mac.sh build" >&2; exit 1; }
-  codesign -dv "$APP" 2>&1 | grep -q "Authority=Developer ID Application" \
+  # The Authority lines only appear at -vv; read the output whole (grep -q would cut the pipe short under pipefail).
+  local signature; signature="$(codesign -dvv "$APP" 2>&1)"
+  [[ "$signature" == *"Authority=Developer ID Application"* ]] \
     || { echo "$APP is not a Developer ID build: run scripts/release-mac.sh build" >&2; exit 1; }
   local version id zip dmg stage
   version="$(app_version)"
@@ -188,47 +194,57 @@ notarize() {
 
 publish() {
   [[ -n "${WEBSITE_URL:-}" ]] || { echo "WEBSITE_URL is empty in scripts/release.env" >&2; exit 1; }
-  local version build dmg site_dmg signature notes_link=""
+  local version build tag dmg stable signature notes
   version="$(app_version)"
   build="$(app_build)"
+  tag="v$version"
+  notes="docs/release-notes/$version.md"
   dmg="$OUT/Kakureneko-$version.dmg"
   [[ -f "$dmg" ]] || { echo "no $dmg: run scripts/release-mac.sh notarize" >&2; exit 1; }
   xcrun stapler validate "$dmg" >/dev/null || { echo "$dmg is not notarized and stapled" >&2; exit 1; }
-  mkdir -p site/download site/updates
-  site_dmg="site/download/Kakureneko-$version.dmg"
-  cp "$dmg" "$site_dmg"
-  cp "$dmg" site/download/Kakureneko.dmg      # the website's download button
   # `sparkle:edSignature="…" length="…"`, signed with the private key in the login keychain.
-  signature="$("$SPARKLE_BIN/sign_update" "$site_dmg")"
+  signature="$("$SPARKLE_BIN/sign_update" "$dmg")"
   [[ "$signature" == *edSignature* ]] || { echo "sign_update failed: $signature" >&2; exit 1; }
-  [[ -f "site/updates/$version.html" ]] && notes_link="${WEBSITE_URL%/}/updates/$version.html"
-  python3 - "$version" "$build" "${WEBSITE_URL%/}/download/Kakureneko-$version.dmg" "$signature" "$notes_link" <<'PY'
+  # The README's download button: <repository>/releases/latest/download/Kakureneko.dmg.
+  stable="$OUT/latest/Kakureneko.dmg"
+  mkdir -p "$OUT/latest"
+  cp "$dmg" "$stable"
+  if gh release view "$tag" >/dev/null 2>&1; then
+    gh release upload "$tag" "$dmg" "$stable" --clobber
+  elif [[ -f "$notes" ]]; then
+    gh release create "$tag" "$dmg" "$stable" --title "Kakureneko $version" --notes-file "$notes"
+  else
+    gh release create "$tag" "$dmg" "$stable" --title "Kakureneko $version" \
+      --notes "Kakureneko for Mac $version. Download Kakureneko.dmg, open it and drag Kakureneko to Applications."
+  fi
+  python3 - "$version" "$build" "${WEBSITE_URL%/}/releases/download/$tag/Kakureneko-$version.dmg" "$signature" \
+    "${WEBSITE_URL%/}/releases/tag/$tag" <<'PY'
 import email.utils, pathlib, re, sys
 version, build, url, signature, notes = sys.argv[1:6]
-path = pathlib.Path("site/updates/appcast.xml")
+path = pathlib.Path("appcast.xml")
 head = ('<?xml version="1.0" encoding="utf-8"?>\n'
         '<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">\n'
         '  <channel>\n    <title>Kakureneko</title>\n')
 text = path.read_text() if path.exists() else head + "  </channel>\n</rss>\n"
 # One entry per build: publishing the same build again replaces it.
 text = re.sub(r"\s*<item>(?:(?!</item>).)*<sparkle:version>%s</sparkle:version>.*?</item>" % re.escape(build), "", text, flags=re.S)
-notes_line = f"\n      <sparkle:releaseNotesLink>{notes}</sparkle:releaseNotesLink>" if notes else ""
 item = f"""
     <item>
       <title>Kakureneko {version}</title>
       <pubDate>{email.utils.formatdate(usegmt=True)}</pubDate>
       <sparkle:version>{build}</sparkle:version>
       <sparkle:shortVersionString>{version}</sparkle:shortVersionString>
-      <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>{notes_line}
+      <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+      <sparkle:fullReleaseNotesLink>{notes}</sparkle:fullReleaseNotesLink>
       <enclosure url="{url}" type="application/octet-stream" {signature} />
     </item>"""
 marker = "    <title>Kakureneko</title>\n"
 text = text.replace(marker, marker + item.lstrip("\n") + "\n", 1) if marker in text else text.replace("<channel>", "<channel>" + item, 1)
 path.write_text(text)
 PY
-  xmllint --noout site/updates/appcast.xml
-  echo "Published $version ($build): $site_dmg, site/download/Kakureneko.dmg, site/updates/appcast.xml"
-  echo "Deploy the site to make it live."
+  xmllint --noout appcast.xml
+  echo "Published $version ($build): GitHub Release $tag, appcast.xml"
+  echo "Commit and push appcast.xml to make the update live."
 }
 
 case "$COMMAND" in

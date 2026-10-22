@@ -88,7 +88,7 @@
       <div class="facts">
         <div><small>Age</small><b>4+</b></div>
         <div><small>Category</small><b>Developer Tools</b></div>
-        <div><small>Developer</small><b class="todo">TODO</b></div>
+        <div><small>Price</small><b>Free</b></div>
         <div><small>Size</small><b>—</b></div>
       </div>
     </div>
@@ -110,8 +110,8 @@
 
   <h2>Still needed from you</h2>
   <div class="table-wrap"><table>
-    <tr><td>Copyright and developer name</td><td>Your legal name or company, e.g. <code>2026 Your Name</code>. It's also needed in <code>scripts/release.env</code> and on the privacy page.</td></tr>
-    <tr><td>Price</td><td>Free or paid. Nothing in the listing mentions a price.</td></tr>
+    <tr><td>Copyright</td><td>Paste <code>2026 y0ung-T</code>.</td></tr>
+    <tr><td>Price</td><td>Choose Free under Pricing and Availability.</td></tr>
     <tr><td>App Review contact</td><td>Name, phone and email.</td></tr>
     <tr><td>Demo video for App Review</td><td>A short unlisted video of the Mac and iPhone working together. Its link goes into the review notes.</td></tr>
     <tr><td>Website live</td><td>The support and privacy URLs have to load before you submit.</td></tr>
@@ -159,6 +159,8 @@ Kakureneko (隠れ猫) is Japanese for "hiding cat", like Soot, our cat, who kee
     marketing: { label: 'Marketing URL', text: 'https://kakureneko.com/' },
     privacy: { label: 'Privacy Policy URL', text: 'https://kakureneko.com/privacy/' },
     category: { label: 'Category', text: 'Primary: Developer Tools · Secondary: Utilities' },
+    review: { label: 'App Review notes', limit: 4000, text: "Kakureneko for iPhone is the companion to Kakureneko for Mac, a menu bar app distributed outside the Mac App Store (notarized Developer ID download from https://kakureneko.com). The Mac app keeps a MacBook awake while AI coding agents (command-line tools such as Claude Code or Codex) work, even with the lid closed, and lets it sleep when they're done. It sends alerts and its status to this app through the user's iCloud account (CloudKit). There is no account or server of our own and no pairing: the same Apple Account on both devices is enough.\n\nWithout a Mac running Kakureneko, the app has nothing to show and waits for a Mac. To review it without a Mac, use the built-in demo:\n1. Launch the app and go through the welcome steps (notifications, iCloud).\n2. On the last step (\"Waiting for your Mac\"), tap \"See a demo\". It's also in the Settings tab: \"See a demo\".\n3. The demo runs on a sample Mac: agents working and waiting, the sleep countdown, Keep awake / Sleep now (they answer like a real Mac), and the Activity list. Nothing is sent to iCloud or to any Mac. \"End demo\" in Settings returns to the real app.\n\nDemo video (real Mac and iPhone together): https://REPLACE-ME\n\nTo test with a real Mac: install Kakureneko for Mac from https://kakureneko.com on a Mac with macOS 26 or later, sign in to the same Apple Account as the iPhone, and turn on Settings → Notifications → \"Send alerts to your iPhone\" with \"Send them: Always\". Then tap \"Send Test Alert\" in the iPhone app's Settings tab.\n\nPermissions and background modes:\n- Notifications, including Time Sensitive: used for \"an agent needs your input\" and safety stops, so they get through Focus.\n- Background mode \"remote-notification\": CloudKit silent pushes that keep the Mac's status in the app up to date.\n- A Notification Service Extension formats each alert from its CloudKit record.\n\nThe app has no in-app purchases, ads, analytics or third-party SDKs.",
+      note: 'Replace https://REPLACE-ME with the link to your demo video before pasting.' },
     whatsnew: { label: 'What to Test (TestFlight)', limit: 4000, text:
 `The first version of Kakureneko for iPhone.
 

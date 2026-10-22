@@ -1,5 +1,9 @@
 # Kakureneko for iPhone: App Store Connect
 
+> **Not used (2026-10-22).** The iPhone app ships only as a TestFlight beta, and kakureneko.com and `site/` are gone.
+> This listing is kept for reference. For TestFlight, see docs/RELEASE.md ("TestFlight"); its privacy policy URL is
+> `https://github.com/y0ung-T/kakureneko/blob/main/PRIVACY.md`.
+
 Everything to paste into App Store Connect for the iPhone app (bundle id `com.kakureneko.Kakureneko`, iPhone only,
 iOS 18+). Written 2026-10-18 from the code (`iPhone/`, `Sources/KakurenekoCloud/`, `Xcode/CloudKit/schema.ckdb`) and
 the website in `site/`. The website is **https://kakureneko.com** (`WEBSITE_URL` in `scripts/release.env`, which
@@ -23,8 +27,8 @@ Every line marked **TODO** needs a human before submission.
 | Bundle ID | `com.kakureneko.Kakureneko` |
 | SKU | `kakureneko-iphone` (anything unique; never shown) |
 | Content rights | "Does your app contain, show, or access third-party content?" **No** |
-| Copyright | `2026 REPLACE-ME` **TODO**: legal name |
-| Price | **TODO** (the description and the website don't mention a price) |
+| Copyright | `2026 y0ung-T` (free text: the developer's GitHub handle, by choice not the legal name) |
+| Price | **Free** (decided 2026-10-19). No in-app purchases. |
 
 The App Store name doesn't have to match the home screen name: the app's `CFBundleDisplayName` is "Kakureneko"
 whichever store name you end up with.
